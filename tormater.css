@@ -1,10 +1,10 @@
 html {background-color:#f6f6f6; font-size:95%}
-body {text-align: center; color:#222}
+body {text-align: center; color:#222; margin: 0;}
 a {color:#1687cb; text-decoration:none}
 a:hover {text-decoration:underline}
-#wrapper {max-width: 900px; margin: 0 auto; box-sizing: border-box}
-#content {background-color: #fff; border: 1px solid #ddd; border-top: none; float: left; font-family: Arial, Helvetica, sans-serif; padding: 20px 30px; text-align: left; width: 100%; box-sizing: border-box;}
-#footer {font-size: 80%; clear: both; border: 1px solid #ddd; border-top:none; background: white; padding: 5px; font-family:Helvetica, Arial, sans-serif}
+#wrapper {box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); max-width: 900px; margin: 0 auto; box-sizing: border-box}
+#content {background-color: #fff; border: 1px solid #ccc; border-top: 1px solid #edd; float: left; font-family: Arial, Helvetica, sans-serif; padding: 20px 30px; text-align: left; width: 100%; box-sizing: border-box;}
+#footer {font-size: 80%; clear: both; border: 1px solid #ccc; border-top:none; background: white; padding: 5px; font-family:Helvetica, Arial, sans-serif}
 #menu {float: left; clear: both; color:#fff; padding: 0 30px; text-shadow:#0292fc 0px -1px;font-family: Arial, Helvetica, sans-serif; padding-bottom: -11px; background: linear-gradient(#5dbcff, #0292fc); box-shadow:#8adef9 0px 1px inset; border: 1px solid #1f4f83; text-align: left; font-size: 65%; box-sizing: border-box; width:100%}
 #menu a {color:#fff}
 .postimg {box-sizing: border-box; width:100%; border: 1px outset #000}
