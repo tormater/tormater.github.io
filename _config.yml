@@ -1,1 +1,7 @@
-theme: minima
+remote_theme : tormater/tormater-jekyll
+
+# Site Settings
+locale                   : "en-US"
+title                    : "Tormater"
+title_separator          : "-"
+description              : "Website for the Tormater github organization."
