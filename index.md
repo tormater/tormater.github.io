@@ -3,5 +3,6 @@ layout: page
 title: "Tormater"
 permalink: /
 ---
+Welcome to the Tormater homepage.
 
-# Tormater
+This is the official website for the Tormater community and github organization.
