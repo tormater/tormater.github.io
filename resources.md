@@ -5,7 +5,7 @@ permalink: /resources/
 ---
 ## Official resources:
 [Tormater Github Organization](https://github.com/tormater)<br>
-[Tormater Forum](torum.rf.gd/forum)<br>
+[Tormater Forum](http://torum.rf.gd/forum)<br>
 [Tormater YouTube](https://www.youtube.com/@tormater)
 ## Unofficial resources:
 [Tormater Discord Guild](https://discord.com/invite/zbQUz6XeHS)<br>
