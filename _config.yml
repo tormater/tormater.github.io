@@ -1,4 +1,4 @@
-remote_theme : tormater/tormater-jekyll
+remote_theme : minimal
 
 # Site Settings
 locale                   : "en-US"
