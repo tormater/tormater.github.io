@@ -1,4 +1,4 @@
-remote_theme : minimal
+remote_theme : minima
 
 # Site Settings
 locale                   : "en-US"
