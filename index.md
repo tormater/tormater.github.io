@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Tormater"
+title: "Homepage"
 permalink: /
 ---
 Welcome to the Tormater homepage.
