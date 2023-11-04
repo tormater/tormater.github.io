@@ -1,7 +1,0 @@
-theme : minima
-
-# Site Settings
-locale                   : "en-US"
-title                    : "Tormater"
-title_separator          : "-"
-description              : "Website for the Tormater github organization."
