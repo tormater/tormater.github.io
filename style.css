@@ -129,6 +129,11 @@ body {
 .card_link:hover {
   filter: brightness(130%);
 }
+
+span.card_link {
+  letter-spacing:-0.5px;
+  white-space: nowrap;
+}
 .card b {
   font-size: 17px;
 }
