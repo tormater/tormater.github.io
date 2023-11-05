@@ -126,6 +126,7 @@ body {
   float: right;
   margin-top: 96px;
   border-radius:4px;
+  font-family: Arial, sans-serif;
 }
 .card_link:hover {
   filter: brightness(130%);
