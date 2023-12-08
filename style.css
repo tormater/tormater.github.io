@@ -139,6 +139,15 @@ span.card_link {
 .card b {
   font-size: 17px;
 }
+@media only screen and (max-width:768px) {
+  body {
+	    margin: 0px auto;
+  }
+  #title {
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+  }
+}
 @media only screen and (max-width: 600px) {
   .image_plus_text_optional {
     display: inline-block;
