@@ -42,9 +42,42 @@
 <p>Tormater is a wide topic, encompassing many ideals, individuals, and concepts. We here at Tormater.com take Tormater very seriously—and we suggest you do too.</p>
 <p>Talk <em>Tormater</em> on our official <a href="http://forum.tormater.com">community forum</a>.<br>
 Or, join our official <a href="https://discord.gg/zbQUz6XeHS">discord guild</a> for instant communication.</p>
-<p>We highly recommend creating your support threads on the forum, as they're easily searchable and referenceable by anyone else having the same issue.</p>
 </div>
 <img class="image_plus_text_img_optional" src="forum.png" alt="Tormater Council"></div>
+<h2>Latest news</h2>
+
+<noscript>JavaScript is required to view this content. You can always check <a href="https://github.com/tormater">our github organization</a> for new releases, projects, and info.</noscript>
+<div id="news"><div id="loading" class="hide">Fetching the latest news...</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  const getJSON = async url => {
+  const response = await fetch(url);
+  if(!response.ok) // check if response worked (no 404 errors etc...)
+    throw new Error(response.statusText);
+
+  const data = response.json(); // get JSON from the response
+  return data; // returns a promise, which resolves to this data value
+  }
+
+  console.log("Fetching data...");
+  var loading = document.getElementById("loading");
+  loading.setAttribute("class", "");
+  getJSON("https://api.github.com/repos/tormater/tormater-forum/releases").then(
+  data => {
+    loading.setAttribute("class", "hide");
+    for (let i = 0; i < 3; i++) {
+        var news_article = document.createElement("div"),
+        news = document.getElementById("news");
+    
+        news_article.setAttribute("class", "news_card");
+        news_article.innerHTML = "<a href='" + data[i]["html_url"]  + "' target='_blank'><h2>Tormater Forum <i>"
+         + data[i]["name"] + "</i><h2></a>" +marked.parse(data[i]["body"])
+         + "<span>Released on " + data[i]["published_at"].split("T")[0] + ", by " + data[i]["author"]["login"] +"</span>";
+        news.insertAdjacentHTML('beforeend', news_article.outerHTML);
+    }
+  })
+</script>
 
 </div>
 <div id="footer">
