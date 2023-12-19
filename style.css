@@ -96,6 +96,29 @@ body {
   max-width: 48px;
   height: auto;
 }
+.hide {
+  display: none;
+}
+#loading {
+  gap: 15px;
+  border: 1px solid #cbc2a5;
+  padding: 8px 20px;
+  border-radius: 6px;
+  background: linear-gradient(#ffe99f,#e1cd80);
+  box-shadow: 0px 1px inset #fef5d7;
+  text-shadow: 0px 1px #fef5d7;
+  margin-bottom: 650px;
+}
+.news_card {
+  gap: 15px;
+  border: 1px solid #ccc;
+  padding: 5px 20px;
+  padding-bottom: 20px;
+  border-radius: 6px;
+  background: linear-gradient(#efefef,#ddd);
+  box-shadow: 0px 1px inset #fff;
+  margin-bottom: 12px;
+}
 .card {
   display: flex;
   flex-direction: row;
