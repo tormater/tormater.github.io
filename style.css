@@ -26,6 +26,7 @@ body {
   padding: 20px 40px;
   border: 1px solid #ccc;
   border-bottom: 0px;
+  border-top: 0px;
   background-color: #efefef;
   background: linear-gradient(#fff,#efefef);
 }
