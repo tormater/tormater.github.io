@@ -14,7 +14,7 @@ a:hover {
 
 html {
   color:#444;
-  background:#fff;
+  background:linear-gradient(#eee,#fff);
   font-size: 13px;
 }
 body {
