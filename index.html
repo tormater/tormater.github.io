@@ -1,92 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="style.css">
-  <link rel="Shortcut Icon" href="https://tormater.com/favicon.ico">
-  <link rel="canonical" href="https://tormater.com">
-  
-  <title>Tormater.com</title>
-  <meta name='description' content='Tormater.com: The official homepage of the Tormater Community.'>
-  <meta name="keywords" content="Tormater, Tor mater, PHP, GZDoom, ZDoom">
-  <meta name="author" content="Tormater Organization">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#556379">
-  
-  <meta property="og:title" content="Tormater.com: The official Tormater website.">
-  <meta property="og:description" content="Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.">
-  <meta property="og:image" content="https://tormater.com/forum.png">
-  <meta property="og:type" content="website">
+---
+title: Home
+layout: default
+---
 
-  <meta property="twitter:card" content="summary">
-  <meta property="twitter:url" content="https://tormater.com/">
-  <meta property="twitter:title" content="Tormater.com: The official Tormater website.">
-  <meta property="twitter:description" content="Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.">
-  <meta property="twitter:image" content="https://tormater.com/forum.png">
-</head>
-<body>
-<div id="title">
-<span>Tormater.com</span>
-</div>
-<div id="header">
-<a href="https://tormater.com">Home</a>
-<a href="http://forum.tormater.com">Community</a>
-<a href="https://tormater.com/projects">Projects</a>
-<a href="https://tormater.com/about">About us</a>
-</div>
-
-<div id="body">
-
-<div class="image_plus_text_optional"><div><h1>Welcome to Tormater.com!</h1>
-<p><em>Tormater.com</em> is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.</p>
-<p>Tormater is a wide topic, encompassing many ideals, individuals, and concepts. We here at Tormater.com take Tormater very seriously—and we suggest you do too.</p>
-<p>Talk <em>Tormater</em> on our official <a href="http://forum.tormater.com">community forum</a>.<br>
-Or, join our official <a href="https://discord.gg/zbQUz6XeHS">discord guild</a> for instant communication.</p>
-</div>
-<img class="image_plus_text_img_optional" src="forum.png" alt="Tormater Council"></div>
-<h2>Latest news</h2>
-
-<noscript>JavaScript is required to view this content. You can always check <a href="https://github.com/tormater">our github organization</a> for new releases, projects, and info.</noscript>
-<div id="news"><div id="loading" class="hide">Fetching the latest news...</div></div>
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script>
-  const getJSON = async url => {
-  const response = await fetch(url);
-  if(!response.ok) // check if response worked (no 404 errors etc...)
-    throw new Error(response.statusText);
-
-  const data = response.json(); // get JSON from the response
-  return data; // returns a promise, which resolves to this data value
-  }
-
-  console.log("Fetching data...");
-  var loading = document.getElementById("loading");
-  loading.setAttribute("class", "");
-  getJSON("https://api.github.com/repos/tormater/tormater-forum/releases").then(
-  data => {
-    loading.setAttribute("class", "hide");
-    for (let i = 0; i < 3; i++) {
-        var news_article = document.createElement("div"),
-        news = document.getElementById("news");
-    
-        news_article.setAttribute("class", "news_card");
-        news_article.innerHTML = "<a href='" + data[i]["html_url"]  + "' target='_blank'><h2>Tormater Forum <i>"
-         + data[i]["name"] + "</i><h2></a>" +marked.parse(data[i]["body"])
-         + "<span>Released on " + data[i]["published_at"].split("T")[0] + ", by " + data[i]["author"]["login"] +"</span>";
-        news.insertAdjacentHTML('beforeend', news_article.outerHTML);
-    }
-  })
-</script>
-
-</div>
-<div id="footer">
-  <div class="satisfy">
-    <img src="satisfy.png" alt="100%">
-    <span>100% Satisfaction Guarantee — If you aren't satisfied, Tormater will arrive.</span>
+<div class="text_widget">
+  <div>
+    <h2 style="margin-top: 0px">Welcome to Tormater.com!</h2>
+    Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.<br>
+    <br>
+    Tormater is a wide topic, encompassing many ideals, individuals, and concepts. We here at Tormater.com take Tormater very seriously—and we suggest you do too.<br>
+    <br>
+    Talk <em>Tormater</em> on our official <a href="http://forum.tormater.com" target="_blank">community forum</a>.<br>
+    Or, join our official <a href="https://discord.gg/zbQUz6XeHS" target="_blank">discord guild</a> for instant communication.
   </div>
-<br><br>
-© 2023-2024 Tormater.com (All rights reserved)
+  <img src="assets/images/forum.png" class="widget_img">
 </div>
-</body>
-</html> 
+<br>
+<div class="text_widget tw_blue tw_forum">
+  <img src="{{ "assets/images/tormater_forum.png" | absolute_url }}">
+  <div>
+    <h2 style="margin-top: 0px">Tormater Forum</h2>
+    <p>Tormater Forum is a lightweight, easy-to-use forum software built from the ground up with PHP and MySQL. 
+    <br>Tormater Forum is fast, reactive, and runs well on low end servers.</p>
+    <a href="{{ "projects/tormater-forum" | absolute_url }}">Check out Tormater Forum</a> or 
+    <a href="http://forum.tormater.com" target="_blank">Try Tormater Forum</a>
+  </div>
+</div>
+<br>
+<div class="text_widget card_green" style="padding-right: 0px;">
+  <div>
+    <h2 style="margin-top: 0px">Tormater 2: Electric Boogaloo</h2>
+    <p>The Tormater returns in the amazing, ultimate sequel to Tormater 3D!
+The best edition of Tormater yet! Tor_GET this new tormater concoction today!</p>
+    <a href="{{ "projects/tormater-2" | absolute_url }}" target="_blank">Check out Tormater 2: Electric Boogaloo</a>
+  </div>
+  <img src="{{ "assets/images/tormater-2.png" | absolute_url }}" class="widget_img" style="margin-left:auto">
+</div>

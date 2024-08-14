@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{"assets/css/style.css" | absolute_url }}">
+  <link rel="Shortcut Icon" href="{{"assets/images/favicon.ico" | absolute_url }}">
+  <link rel="canonical" href="https://tormater.com">
+  
+  <title>{{ page.title }} | Tormater.com</title>
+  <meta name="description" content="Tormater.com: The official homepage of the Tormater Community.">
+  <meta name="keywords" content="tormater, tor mater, php, gzdoom, zdoom, software, development">
+  <meta name="author" content="Tormater Organization">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#556379">
+  
+  <meta property="og:title" content="Tormater.com: The official Tormater website.">
+  <meta property="og:description" content="Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.">
+  <meta property="og:image" content="{{"assets/images/forum.png" | absolute_url }}">
+  <meta property="og:type" content="website">
+
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:url" content="https://tormater.com/">
+  <meta property="twitter:title" content="Tormater.com: The official Tormater website.">
+  <meta property="twitter:description" content="Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.">
+  <meta property="twitter:image" content="{{"assets/images/forum.png" | absolute_url }}">
+</head>
+<body>
+  <div id="body">
+    <div id="sidebar">
+      <div class="header has_logo">&#xfeff;</div>
+      <div class="nav">&#xfeff;</div>
+      <div class="lower"> 
+      <b class="link_title"><span class="long">Tormater </span>Community</b>
+        <ul class="nav_list">
+          <li><a href="http://forum.tormater.com"><img src="{{"assets/images/torforum.png" | absolute_url }}"><span class="long">Tormater </span>Forum</a></li>
+          <li><a href="https://discord.gg/zbQUz6XeHS"><img src="{{"assets/images/irc_online.png" | absolute_url }}"><span class="long">Tormater </span>Discord</a></li>
+          <!-- <li><a href=""><img src="{{"assets/images/torblog.png" | absolute_url }}"><span class="long">Tormater </span>Blogspot</a></li> -->
+        </ul>
+      <br>
+      <b class="link_title"><span class="long">Tormater </span>Games</b>
+        <ul class="nav_list">
+          <li><a href="{{"/projects/tormater-3d" | absolute_url }}"><img src="{{"assets/images/tor1.png" | absolute_url }}">Tormater 3D</a></li>
+          <li><a href="{{"/projects/tormater-2" | absolute_url }}"><img src="{{"assets/images/tor2.png" | absolute_url }}">Tormater 2</a></li>
+          <li><a href="{{"/projects/tormater-cd" | absolute_url }}"><img src="{{"assets/images/torcd.png" | absolute_url }}">Tormater CD</a></li>
+        </ul>
+      <br>
+      <b class="link_title">Future <span class="long">Tormater </span>Games</b>
+        <ul class="nav_list">
+          <li><abbr title="Coming soon..."><img src="{{"assets/images/torxicmaste.png" | absolute_url }}"><span class="long">Tormater </span>Toxic Waste</abbr></li>
+          <li><abbr title="Coming soon..."><img src="{{"assets/images/unknown.png" | absolute_url }}">Tormater 3</abbr></li>
+          <li><abbr title="Coming soon..."><img src="{{"assets/images/unknown.png" | absolute_url }}"><span class="long">Super </span>Tormater Bros.</abbr></li>
+          <!-- <li><abbr title="Coming soon...">Toxic Waste: Aftermath</abbr></li> -->
+        </ul>
+      </div>
+    </div>
+    <div id="content">
+      <div class="header">Tormater.com</div>
+      <div class="nav">
+        <a href="{{"/" | absolute_url }}">Home</a>
+        <a href="http://forum.tormater.com"><span class="long">Community</span><span class="short">Forum</span></a>
+        <a href="{{"/projects" | absolute_url }}">Projects</a>
+        <a href="{{"/about" | absolute_url }}">About us</a>
+      </div>
+      <div class="lower"> 
+        {{ content }}
+      </div>
+    </div>
+  </div>
+  <div id="footer">
+    <div><span>Copyright © 2023-2024 Tormater.com (All rights reserved).
+    <br><br>
+    We use some images from the Crystal Project (Copyright © 2006-2007 Everaldo Coelho).</span></div>
+  </div>
+</body>
+</html>
