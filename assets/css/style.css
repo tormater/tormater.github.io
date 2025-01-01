@@ -359,10 +359,76 @@ body {
   background: linear-gradient(#009fd0,#001d75);
   box-shadow: 0px 1px 0px #00c3ff inset;
 }
+.addon_cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  max-width: 100%;
+}
+
+.addon_card {
+  padding: 15px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.addon_title {
+  display: block;
+  font-weight: bold;
+  font-size: 140%;
+  margin-top: 8px;
+}
+.addon_author {
+  display: block;
+  font-size: 90%;
+  margin-bottom: 8px;
+}
+
+.addon_img_container {
+  display: flex;
+  background: #e6e6e6;
+  background-image: none;
+  align-items: center;
+  flex-direction: column;
+}
+.addon_card img {
+  max-width: 100%;
+}
+
+.card_extension {
+  border: 1px solid #74de78;
+  background-image: linear-gradient(#fff, #a4f7a7);
+}
+
+.card_theme {
+  border: 1px solid #9ab3db;
+  background-image: linear-gradient(#fff, #bfdbff);
+}
+
+.img_theme {
+  height: 200px;
+}
+
+.addon_dl {
+  align-self: flex-end;
+  display: inline-block;
+  margin-top: auto;
+}
+.addon_dl img {
+  border: none;
+  margin-right: 12px;
+  vertical-align: middle;
+  width: 24px;
+}
 
 @media only screen and (max-width: 1000px) {
   .project_columns {
     grid-template-columns: 50% 50%;
+  }
+}
+@media only screen and (max-width: 1100px) {
+  .addon_cards {
+    grid-template-columns: 1fr 1fr;
   }
 }
 @media only screen and (max-width: 850px) {
@@ -395,6 +461,11 @@ body {
   }
   li a, li abbr, .link_title {
     width: 103px;
+  }
+}
+@media only screen and (max-width: 750px) {
+  .addon_cards {
+    grid-template-columns: 1fr;
   }
 }
 @media only screen and (max-width: 500px) {
