@@ -27,7 +27,7 @@
 <body>
   <div id="body">
     <div id="sidebar">
-      <div class="header has_logo">&#xfeff;</div>
+      <a href="{{"/" | absolute_url }}"><div class="header has_logo">&#xfeff;</div></a>
       <div class="nav">&#xfeff;</div>
       <div class="lower"> 
       <b class="link_title"><span class="long">Tormater </span>Community</b>
@@ -54,14 +54,14 @@
       </div>
     </div>
     <div id="content">
-      <div class="header">Tormater.com</div>
-      <div class="nav">
-        <a href="{{"/" | absolute_url }}">Home</a>
-        <a href="http://forum.tormater.com"><span class="long">Community</span><span class="short">Forum</span></a>
-        <a href="{{"/projects" | absolute_url }}">Projects</a>
-        <a href="{{"/addons" | absolute_url }}">Addons</a>
-        <a href="{{"/about" | absolute_url }}">About us</a>        
-      </div>
+      <div class="header"><a href="{{"/" | absolute_url }}">Tormater.com</a></div>
+      <div class="nav"><!--
+        --><a href="{{"/" | absolute_url }}">Home</a><!--
+        --><a href="http://forum.tormater.com"><span class="long">Community</span><span class="short">Forum</span></a><!--
+        --><a href="{{"/projects" | absolute_url }}">Projects</a><!--
+        --><a href="{{"/addons" | absolute_url }}">Addons</a><!--
+        --><a href="{{"/about" | absolute_url }}">About us</a><!--
+      --></div>
       <div class="lower"> 
         {{ content }}
       </div>
