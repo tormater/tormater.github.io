@@ -183,6 +183,11 @@ body {
   color: #fff;
   border: unset;
 }
+.tw_purple {
+  background: linear-gradient(#df73ba,#521192);
+  color: #fff;
+  border: unset;
+}
 .tw_white {
   background: #fff;
 }
@@ -197,11 +202,11 @@ body {
   border: unset;
 }
 
-.tw_blue div a, .tw_teal div a, .tw_silver div a {
+.tw_blue div a, .tw_teal div a, .tw_silver div a, .tw_purple div a {
   color: #ffd966;
 }
 
-.tw_blue, .tw_teal, .tw_silver {
+.tw_blue, .tw_teal, .tw_silver, .tw_purple {
   text-shadow: 0px 1px #0002;
 }
 
