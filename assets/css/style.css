@@ -36,6 +36,10 @@ body {
 }
 #sidebar {
   background-color: #e4e4e4;
+  background-image: url(texture.png);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 200px;
 }
 .lower {
   padding: 15px;
@@ -479,6 +483,9 @@ body {
   #body {
     grid-template-columns: 150px auto;
   }
+  #sidebar {
+    background-size: 150px;
+  }
   li a, li abbr, .link_title {
     width: 103px;
   }
@@ -501,6 +508,7 @@ body {
   }  
   #sidebar {
     grid-row: 2;
+    background-image: none;
   }
   #sidebar .short {
     display: none;
