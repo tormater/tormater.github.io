@@ -254,7 +254,18 @@ body {
 
 .page_title {
   margin: 0px;
-  filter: drop-shadow(2px 2px 2px #0003);
+  display: block;
+  padding: 5px 18px;
+  color: #fff;
+  background: linear-gradient(to right,#60677b,transparent),url(banner_bg.png);
+  background-size: auto, contain;
+  border-left: 1px solid #36405c;
+  font-weight: normal;
+  text-shadow: 0px 0px 8px #36405c, 0px 0px 2px #1d1f26;
+  background-position-x: 0%, 100%;
+}
+.project_title {
+  margin: 0px;
 }
 .page_title a {
   color: #000;
@@ -273,16 +284,29 @@ body {
   border-bottom: 1px dashed #aaa;
   margin-bottom: 25px;
 }
+
+.project_gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-flow: dense;
+  gap: 8px;
+}
+
 .project_img, .project_vid {
-  max-width: 70%;
+  max-width: 100%;
   height: auto;
-  padding: 0px 15%;
   filter: drop-shadow(5px 5px 5px #0007);
+  box-sizing: border-box;
+}
+
+.main_gallery_item {
+  grid-column: span 2;
+  grid-row: span 2;
 }
 
 .project_vid {
-  width: 70%;
-  aspect-ratio: 4 / 3;
+  width: 100%;
+  aspect-ratio: 16 / 9;
 }
 
 .project_listing {
@@ -294,7 +318,7 @@ body {
 
 .project_columns {
   display: grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: 3fr 2fr;
   gap: 30px;
 }
 
@@ -447,7 +471,7 @@ body {
 
 @media only screen and (max-width: 1000px) {
   .project_columns {
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 1fr 1fr;
   }
 }
 @media only screen and (max-width: 1100px) {
@@ -455,6 +479,13 @@ body {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+@media only screen and (max-width: 900px) {
+  .project_gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media only screen and (max-width: 850px) {
   .project_columns {
     display: block;
@@ -493,6 +524,10 @@ body {
 @media only screen and (max-width: 750px) {
   .addon_cards {
     grid-template-columns: 1fr;
+  }
+  
+  .project_gallery {
+    display:block;
   }
 }
 
