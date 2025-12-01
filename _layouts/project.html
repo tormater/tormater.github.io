@@ -10,12 +10,12 @@ layout: default
   <img class="project_banner" src="{{page.banner | absolute_url }}">
   <div class="project_columns">
       <div>
-        <h2 class="page_title">About</h2><br>
+        <h2 class="project_title">About</h2><br>
         {{ content }}
       </div>
   
       <div class="downloads">
-        <h2 class="page_title">Downloads</h2><br>
+        <h2 class="project_title">Downloads</h2><br>
         {% for link in page.downloads %}
           {% if link.type == "big" %}
             <a class="download dl_big" href="{{ link.url }}">
@@ -33,4 +33,21 @@ layout: default
         {% endfor %}
       </div>
   </div>
+  <br>
+  {% if page.gallery.size > 0 %}
+  <div>
+    <h2 class="project_title">Gallery</h2><br>
+    <div class="project_gallery">
+      {% for media in page.gallery %}
+        {% if media.type == "photo" %}
+          <a href="{{ media.url | absolute_url }}" target="_blank"><img class="project_img{% if media.main == "true" %} main_gallery_item{% endif %}" src="{{ media.url | absolute_url }}" ></a>
+        {% elsif media.type == "video" %}
+          <iframe class="project_vid{% if media.main == "true" %} main_gallery_item{% endif %}" src="{{ media.url }}" frameborder="0" allowfullscreen></iframe>
+        {% else %}
+          {{ media.content }}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </div>
