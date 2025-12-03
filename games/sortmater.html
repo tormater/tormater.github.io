@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sortmater</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="sprite" src="sortmater_sheet.png" style="display:none">
+    <img id="title" src="sortmater_title.png" style="display:none">
+    <canvas id="myCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+var sprite = document.getElementById("sprite");
+var title = document.getElementById("title");
+
+var music = new Audio('sortmatermusic.ogg');
+music.loop = true;
+var levels = 5;
+var moves = 0;
+var score = 0;
+
+let map_time = [0];
+let map_fog = [0];
+let maps = [
+[
+"################################",
+"#333333333333333333333333333333#",
+"#3TT3OO3RR3MM3AA3YY3EE3GG33!!33#",
+"#3tt3oo3rr3mm3aa3yy3ee3gg331133#",
+"#333333333333333333333333333333#",
+"###########################33###",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"#333333333333333333333333333333#",
+"##############dddd##############"
+]
+];
+let map = ["pray there will be ampersands today"];
+let player_x = 0;
+let player_y = 0;
+let player_keys = [0,0,0];
+let fog = true;
+
+let ampersands = 0;
+let level = 0;
+let timer = 0;
+let win_page = false;
+let can_move = false;
+let text_bye = false;
+
+let titlescreen = true;
+let lastkeypress = ".";
+
+let things=[];
+var grabbed_thing;
+var mx, my;
+var hiscore = 0;
+
+function keyDownHandler(e) {
+  if (titlescreen == true) {
+      return;
+  }
+  lastkeypress = e.key;
+  switch (e.key) {
+    case "ArrowLeft":
+        moveplayer(player_x-1,player_y);
+        break;
+    case "ArrowRight":
+        moveplayer(player_x+1,player_y);
+        break;
+    case "ArrowUp":
+        moveplayer(player_x,player_y-1);
+        break;
+    case "ArrowDown":
+        moveplayer(player_x,player_y+1);
+        break;
+  }
+  draw();
+}
+
+function changemaptile(x,y,chr) {
+    map[y] = map[y].substring(0,x) + chr + map[y].substring(x+1);
+}
+
+function moveplayer(x,y) {
+  return;
+}
+
+function teleport(x,y) {
+    return;
+}
+
+function open_door(x,y) {
+    return;
+}
+
+let edit = false;
+
+function editor(e) {
+    if (edit != true) return;
+    if (!(event.buttons & 1)) return;
+    let ww = canvas.width/32;
+    let wh = canvas.height/16;
+    if (lastkeypress === "$") {
+        player_x = Math.floor(e.clientX/ww);
+        player_y = Math.floor(e.clientY/wh);
+    }
+    else changemaptile(Math.floor(e.clientX/ww),Math.floor(e.clientY/wh),lastkeypress[0]);
+    
+    console.log("Map:");
+    var mapstr = "";
+    for (let i = 0; i < 16; i++) {
+        mapstr = mapstr + "\"" + map[i] + "\",\n";
+    }
+    
+    console.log(mapstr);
+    
+    draw();
+}
+
+function killplayer() {
+    titlescreen = true;
+    music.pause();
+    music.currentTime = 0;
+    timer = 0;
+    things = [];
+    grabbed_thing = null;
+    var sfx = new Audio('die.ogg');
+    sfx.play();
+    if (score > hiscore) hiscore = score;
+    score = 0;
+}
+
+function getkey(x,y,type) {
+    return;
+}
+
+function getampersand(x,y) {
+    return false;
+}
+
+function mousedata(e) {
+    mx = e.clientX/(canvas.width/32);
+    my = e.clientY/(canvas.height/16);
+}
+
+function trygrab(e) {
+    let dist = 32767;
+    var closest;
+    for (let i = 0; i < things.length; i++) {
+        if (things[i] == null) continue;
+        let temp_dist = Math.hypot(things[i].x-mx,things[i].y-my);
+        if (temp_dist < dist) {
+            closest = things[i];
+            dist = temp_dist;
+        }
+    }
+    if (dist <= 4) {
+        grabbed_thing = closest;
+        grabbed_thing.time = 0;
+        var sfx = new Audio('grab.ogg');
+        sfx.play();
+    }
+}
+
+function releasegrab(e) {
+    if (titlescreen == true) {
+        setup();
+    }
+    var sfx = new Audio('place.ogg');
+    t = map[Math.floor(my)].charAt(Math.floor(mx)).toLowerCase();
+    y = grabbed_thing.letter.toLowerCase();
+    if (t == y) {}
+    else if (t == "3" || t == "#") {}
+    else if ((t == "!" || t == "1") && (y == "f" || y == "p")) {
+        score += 35;
+        sfx = new Audio('burn.ogg');
+    }
+    else if (t == "y" && y == "t") {}
+    else if (t == "g" && y == "r") {}
+    else {killplayer(); return;}
+    if (t != "3" && t != "#") {
+        grabbed_thing.satisfied = true;
+    }
+    grabbed_thing = null;
+    sfx.play();
+}
+
+document.addEventListener("keydown", keyDownHandler);
+canvas.addEventListener("mousemove", mousedata);
+canvas.addEventListener("mousedown", trygrab);
+canvas.addEventListener("mouseup", releasegrab);
+
+function setup() {
+  if (level > levels) {
+      titlescreen = true;
+      win_page = true;
+      music.pause();
+      music.currentTime = 0;
+      return;
+  }
+  
+  setInterval(clear_msg,4000);
+  timer = map_time[level];
+  map = maps[level].slice();
+  fog = map_fog[level];
+  can_move = false;
+  player_keys = [0,0,0];
+  ampersands = 0;
+  for (let i = 0; i < 16; i++) {
+      for (let j = 0; j < 32; j++) {
+          if (map[i].charAt(j) === "$") {
+              player_x = j;
+              player_y = i;
+          }
+          if (map[i].charAt(j) === "&") {
+              ampersands = ampersands + 1;
+          }
+      }
+  }
+  if (titlescreen == true) music.currentTime = 4;
+  else music.currentTime = 0;
+  music.play();
+  titlescreen = false;
+}
+
+function clock_tick() {
+  if (titlescreen == true) {
+      return;
+  }
+  timer++;
+  for (let i = 0; i < things.length; i++) {
+      if (things[i] == null) continue;
+      if (things[i] != grabbed_thing) continue;
+      things[i].time = things[i].time + 1;
+      if (things[i].satisfied != true && things[i].time > 16 && Math.random() < 0.2) {
+          things[i] = null;
+          score -= 15;
+          if (score < 0) score = 0;
+          var sfx = new Audio('melt.ogg');
+          sfx.play();
+      }
+  }
+  things.filter(n => n);
+}
+
+const letters = ["T","O","R","M","A","T","E","R","F","P"];
+
+function add_letter() {
+  things.push({ x:16,y:15,vel_x:(Math.random()-0.5)/10,vel_y:Math.random()*-0.5,letter:letters[Math.floor(Math.random() * letters.length)],time:0,satisfied:false });
+}
+
+
+function draw() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  if (titlescreen == true) {
+      ctx.drawImage(title,0,0,canvas.width,canvas.height);
+      if (hiscore > 0) {
+          ctx.font = "50px Impact,fantasy";
+          ctx.fillStyle = "white";
+          let score_display = `High score: ${hiscore}`;
+          ctx.lineWidth = 4;
+          ctx.strokeText(score_display,0,50);
+          ctx.fillText(score_display,0,50);
+      }
+      
+      return;
+  }
+  
+  canvas.fillstyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  let ww = canvas.width/32;
+  let wh = canvas.height/16;
+  
+  for (let i = 0; i < 16; i++) {
+      for (let j = 0; j < 32; j++) {
+          let rx = Math.floor(j * ww);
+          let ry = Math.floor(i * wh);
+          let rh = Math.ceil(wh);
+          let rw = Math.ceil(ww);
+          let tile = map[i].charAt(j);
+          let shift = 0;
+          if (j > 0 && map[i].charAt(j-1) == tile) shift = 4;
+          
+          if (tile === "#") ctx.drawImage(sprite,0,0,16,16,rx, ry, rw, rh);
+          else if (tile === "3") ctx.drawImage(sprite,16,0,16,16,rx, ry, rw, rh);
+          else if (tile === "d") ctx.drawImage(sprite,32,0,16,16,rx, ry, rw, rh);
+          else if (tile === "T" || tile === "Y") ctx.drawImage(sprite,shift,16,4,4,rx, ry, rw, rh);
+          else if (tile === "t" || tile === "y") ctx.drawImage(sprite,shift,20,4,4,rx, ry, rw, rh);
+          else if (tile === "O") ctx.drawImage(sprite,8+shift,16,4,4,rx, ry, rw, rh);
+          else if (tile === "o") ctx.drawImage(sprite,8+shift,20,4,4,rx, ry, rw, rh);
+          else if (tile === "R" || tile === "G") ctx.drawImage(sprite,shift,24,4,4,rx, ry, rw, rh);
+          else if (tile === "r" || tile === "g") ctx.drawImage(sprite,shift,28,4,4,rx, ry, rw, rh);
+          else if (tile === "M") ctx.drawImage(sprite,8+shift,24,4,4,rx, ry, rw, rh);
+          else if (tile === "m") ctx.drawImage(sprite,8+shift,28,4,4,rx, ry, rw, rh);
+          else if (tile === "A") ctx.drawImage(sprite,16+shift,16,4,4,rx, ry, rw, rh);
+          else if (tile === "a") ctx.drawImage(sprite,16+shift,20,4,4,rx, ry, rw, rh);
+          else if (tile === "E") ctx.drawImage(sprite,16+shift,24,4,4,rx, ry, rw, rh);
+          else if (tile === "e") ctx.drawImage(sprite,16+shift,28,4,4,rx, ry, rw, rh);
+          else if (tile === "!") ctx.drawImage(sprite,24+shift,16,4,4,rx, ry, rw, rh);
+          else if (tile === "1") ctx.drawImage(sprite,24+shift,20,4,4,rx, ry, rw, rh);
+          
+          if (fog == true) {
+              let alpha = Math.hypot(player_x-j,player_y-i) / 8;
+              ctx.fillStyle = `rgba(76,89,99,${alpha})`;
+              ctx.fillRect(rx,ry,rw,rh);
+          }
+      }
+  }
+  
+  for (let i = 0; i < things.length; i++) {
+      if (things[i] == null) continue;
+      var sx,sy;
+      if (things[i].letter == "T") {sx = 0; sy = 32;}
+      if (things[i].letter == "O") {sx = 16; sy = 32;}
+      if (things[i].letter == "R") {sx = 32; sy = 32;}
+      if (things[i].letter == "M") {sx = 48; sy = 32;}
+      if (things[i].letter == "A") {sx = 0; sy = 48;}
+      if (things[i].letter == "E") {sx = 16; sy = 48;}
+      if (things[i].letter == "F") {sx = 32; sy = 48;}
+      if (things[i].letter == "P") {sx = 48; sy = 48;}
+      ctx.drawImage(sprite,sx,sy,16,16,(things[i].x-0.5) * ww, (things[i].y-0.5) * wh, ww, wh);
+  }
+  
+  ctx.font = "30px monospace";
+  ctx.fillStyle = "chartreuse";
+  let score_display = `${score} score`;
+  let timerdisplay = `${Math.floor(timer/60)}:${String(timer%60).padStart(2, '0')}`;
+  ctx.lineWidth = 4;
+  ctx.strokeText(score_display,0,30);
+  ctx.fillText(score_display,0,30);
+  ctx.strokeText(timerdisplay,0,60);
+  ctx.fillText(timerdisplay,0,60);
+  if (!text_bye) {
+      let info = "Earn points by spelling the word Tormater";
+      ctx.strokeText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+      ctx.fillText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+  }
+}
+
+function physics_tick() {
+  if (titlescreen == true) return;
+  var tormater = [0,0,0,0,0,0,0,0];
+  for (let i = 0; i < things.length; i++) {
+      if (things[i] == grabbed_thing && grabbed_thing != null) {
+          things[i].x = mx;
+          things[i].y = my;
+          continue;
+      }
+      if (things[i] == null) continue;
+      if (things[i].x == undefined || things[i].y == undefined) continue;
+      let cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+      things[i].x += things[i].vel_x;
+      things[i].y += things[i].vel_y;
+      let new_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+      
+      if (new_tile == "!" || new_tile == "1") {
+          things[i] = null;
+      }
+      
+      else if ((cur_tile.toLowerCase() !== new_tile.toLowerCase()) && !(new_tile == "3" && cur_tile == "d")) {
+          things[i].x -= things[i].vel_x;
+          things[i].y -= things[i].vel_y;
+          
+          things[i].vel_y *= -0.80;
+          things[i].vel_x *= -0.80;
+          
+          things[i].vel_x += (Math.random()-0.5)*0.25;
+          things[i].vel_y += (Math.random()-0.5)*0.25;
+      }
+      
+      cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+      if (cur_tile == "T" || cur_tile == "t") tormater[0]++;
+      if (cur_tile == "O" || cur_tile == "o") tormater[1]++;
+      if (cur_tile == "R" || cur_tile == "r") tormater[2]++;
+      if (cur_tile == "M" || cur_tile == "m") tormater[3]++;
+      if (cur_tile == "A" || cur_tile == "a") tormater[4]++;
+      if (cur_tile == "Y" || cur_tile == "y") tormater[5]++;
+      if (cur_tile == "E" || cur_tile == "e") tormater[6]++;
+      if (cur_tile == "G" || cur_tile == "g") tormater[7]++;
+  }
+  things.filter(n => n);
+  
+  for (let i = 0; i < 8; i++) {
+      if (tormater[i] < 1) return;
+  }
+  do_tormater_score();
+}
+
+function do_tormater_score() {
+    for (let i = 0; i < things.length; i++) {
+        if (things[i] == null) continue;
+        cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+        
+        if (["T","t","O","o","R","r","M","m","A","a","Y","y","E","e","G","g"].includes(cur_tile)) {
+           things[i] = null;
+           score += 500;
+        }
+    }
+    things.filter(n => n);
+    
+    var sfx = new Audio('torm_get.ogg');
+    sfx.play();
+}
+
+function add_letters() {
+    for (let i = 0; i < timer/20; i++) {
+        add_letter();
+    }
+}
+
+function clear_msg() {
+    if (titlescreen == true) return;
+    text_bye = true;
+    clearInterval(clear_msg);
+}
+
+setInterval(add_letters,2000);
+setInterval(physics_tick, 35);
+setInterval(draw, 20);
+setInterval(clock_tick,1000);
+
+</script>
+  </body>
+</html>
