@@ -186,6 +186,7 @@ function releasegrab(e) {
     if (titlescreen == true) {
         setup();
     }
+    if (grabbed_thing == null) return;
     var sfx = new Audio('place.ogg');
     t = map[Math.floor(my)].charAt(Math.floor(mx)).toLowerCase();
     y = grabbed_thing.letter.toLowerCase();
@@ -370,6 +371,10 @@ function physics_tick() {
       }
       if (things[i] == null) continue;
       if (things[i].x == undefined || things[i].y == undefined) continue;
+      if (things[i].x < 0 || things[i].x > 32 || things[i].y < 0 || things[i].y > 16) {
+          things[i].x = 16;
+          things[i].y = 8;
+      }
       let cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
       things[i].x += things[i].vel_x;
       things[i].y += things[i].vel_y;
