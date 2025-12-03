@@ -164,6 +164,7 @@ function mousedata(e) {
 }
 
 function trygrab(e) {
+    mousedata(e);
     let dist = 32767;
     var closest;
     for (let i = 0; i < things.length; i++) {
@@ -183,6 +184,7 @@ function trygrab(e) {
 }
 
 function releasegrab(e) {
+    mousedata(e);
     if (titlescreen == true) {
         setup();
     }
