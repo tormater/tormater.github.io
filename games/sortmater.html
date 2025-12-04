@@ -76,6 +76,11 @@ let things=[];
 var grabbed_thing;
 var mx, my;
 var hiscore = 0;
+var hiscore_time = 0;
+var last_phys_tick = 0;
+
+var melt1 = new Audio('melt.ogg');
+var melt2 = new Audio('melt2.ogg');
 
 function keyDownHandler(e) {
   if (titlescreen == true) {
@@ -143,12 +148,15 @@ function killplayer() {
     titlescreen = true;
     music.pause();
     music.currentTime = 0;
-    timer = 0;
     things = [];
     grabbed_thing = null;
     var sfx = new Audio('die.ogg');
     sfx.play();
-    if (score > hiscore) hiscore = score;
+    if (score > hiscore) {
+        hiscore = score;
+        hiscore_time = timer;
+    }    
+    timer = 0;
     score = 0;
 }
 
@@ -168,6 +176,10 @@ function mousedata(e) {
     else {
       mx = e.clientX/(canvas.width/32);
       my = e.clientY/(canvas.height/16);
+    }
+    if (grabbed_thing != null) {
+      grabbed_thing.vel_x = mx-grabbed_thing.x;
+      grabbed_thing.vel_y = my-grabbed_thing.y;
     }
 }
 
@@ -197,6 +209,15 @@ function releasegrab(e) {
         setup();
     }
     if (grabbed_thing == null) return;
+    if (grabbed_thing.vel_x == 0 && grabbed_thing.vel_y == 0) {
+        grabbed_thing.vel_x=(Math.random()-0.5)/2;
+        grabbed_thing.vel_y=(Math.random()-0.5)/2;
+    }
+    else {
+        var len = Math.hypot(grabbed_thing.vel_x,grabbed_thing.vel_y)*4;
+        grabbed_thing.vel_x /= len;
+        grabbed_thing.vel_y /= len;
+    }
     var sfx = new Audio('place.ogg');
     t = map[Math.floor(my)].charAt(Math.floor(mx)).toLowerCase();
     y = grabbed_thing.letter.toLowerCase();
@@ -230,7 +251,10 @@ function setup() {
       return;
   }
   
-  setInterval(clear_msg,4000);
+  if (text_bye) {
+      add_letter();
+  }
+  else setInterval(clear_msg,4000);
   timer = map_time[level];
   map = maps[level].slice();
   fog = map_fog[level];
@@ -268,9 +292,9 @@ function clock_tick() {
           if (things[i].letter == "F" || things[i].letter == "P") {
               score -= 15;
               if (score < 0) score = 0;
-              var sfx = new Audio('melt.ogg');
-              if (things[i].letter == "F") sfx = new Audio('melt2.ogg');
-              sfx.play();
+              
+              if (things[i].letter == "F") melt1.play();
+              melt2.play();
               things[i] = null;
           }
           else {
@@ -283,10 +307,10 @@ function clock_tick() {
   things.filter(n => n);
 }
 
-const letters = ["T","O","R","M","A","T","E","R","F","P"];
+const letters = ["T","O","O","R","M","A","A","T","E","E","R","F","P"];
 
 function add_letter() {
-  things.push({ x:16,y:15,vel_x:(Math.random()-0.5)/10,vel_y:Math.random()*-0.5,letter:letters[Math.floor(Math.random() * letters.length)],time:Math.floor(Math.random() * -8),satisfied:false });
+  things.push({ x:16,y:15,vel_x:(Math.random()-0.5)/3,vel_y:+Math.random()*-0.5,letter:letters[Math.floor(Math.random() * letters.length)],time:Math.floor(Math.random() * -8),satisfied:false });
 }
 
 
@@ -297,12 +321,18 @@ function draw() {
   if (titlescreen == true) {
       ctx.drawImage(title,0,0,canvas.width,canvas.height);
       if (hiscore > 0) {
-          ctx.font = "50px Impact,fantasy";
+          var size = canvas.width / 20;
+          var x = canvas.width * 0.4;
+          var y = canvas.height * 0.4;
+          ctx.font = `${size}px Impact,fantasy`;
           ctx.fillStyle = "white";
           let score_display = `High score: ${hiscore}`;
+          let time_display = `${Math.floor(hiscore_time/60)}:${String(hiscore_time%60).padStart(2, '0')}`;
           ctx.lineWidth = 4;
-          ctx.strokeText(score_display,0,50);
-          ctx.fillText(score_display,0,50);
+          ctx.strokeText(score_display,x,y+size);
+          ctx.fillText(score_display,x,y+size);
+          ctx.strokeText(time_display,x,y+size+size);
+          ctx.fillText(time_display,x,y+size+size);
       }
       
       return;
@@ -343,7 +373,20 @@ function draw() {
           }
                     
           if (tile === "#") ctx.drawImage(sprite,0,0,16,16,rx, ry, rw, rh);
-          else if (tile === "3") ctx.drawImage(sprite,16,0,16,16,rx, ry, rw, rh);
+          else if (tile === "3") {
+              ctx.drawImage(sprite,16,0,16,16,rx, ry, rw, rh);
+              if (j % 3 & i % 3) {
+                  var x = 32;
+                  var y = 16;
+                  if ((timer % 40) > 10) {x = 48; y = 16;}
+                  if ((timer % 40) > 20) {x = 32; y = 24;}
+                  if ((timer % 40) > 30) {x = 48; y = 24;}
+                  ctx.drawImage(sprite,x,y,8,8,rx, ry, rw/2, rh/2);
+                  ctx.drawImage(sprite,x+8,y,8,8,rx+rw/2, ry, rw/2, rh/2);
+                  ctx.drawImage(sprite,x+8,y,8,8,rx, ry+rh/2, rw/2, rh/2);
+                  ctx.drawImage(sprite,x,y,8,8,rx+rw/2, ry+rh/2, rw/2, rh/2);
+              } 
+          }
           else if (tile === "d") ctx.drawImage(sprite,32,0,16,16,rx, ry, rw, rh);
           else if (tile === "T" || tile === "Y") ctx.drawImage(sprite,shiftx,16+shifty,4,4,rx, ry, rw, rh);
           else if (tile === "t" || tile === "y") ctx.drawImage(sprite,shiftx,20+shifty,4,4,rx, ry, rw, rh);
@@ -368,6 +411,8 @@ function draw() {
       }
   }
   
+  var interpolate = 35/(Date.now()-last_phys_tick);
+  
   for (let i = 0; i < things.length; i++) {
       if (things[i] == null) continue;
       var sx,sy;
@@ -379,11 +424,11 @@ function draw() {
       if (things[i].letter == "E") {sx = 16; sy = 48;}
       if (things[i].letter == "F") {sx = 32; sy = 48;}
       if (things[i].letter == "P") {sx = 48; sy = 48;}
-      let x = things[i].x;
-      let y = things[i].y;
+      let x = things[i].x + (things[i].vel_x/interpolate);
+      let y = things[i].y + (things[i].vel_y/interpolate);
       if (canvas.width < canvas.height) {
-          y = things[i].x;
-          x = things[i].y;
+          y = things[i].x + (things[i].vel_x/interpolate);
+          x = things[i].y + (things[i].vel_y/interpolate);
       }
       ctx.drawImage(sprite,sx,sy,16,16,(x-0.5) * ww, (y-0.5) * wh, ww, wh);
   }
@@ -416,11 +461,14 @@ function draw() {
 
 function physics_tick() {
   if (titlescreen == true) return;
+  last_phys_tick = Date.now();
   var tormater = [0,0,0,0,0,0,0,0];
   for (let i = 0; i < things.length; i++) {
       if (things[i] == grabbed_thing && grabbed_thing != null) {
           things[i].x = mx;
           things[i].y = my;
+          things[i].vel_x = 0;
+          things[i].vel_y = 0;
           continue;
       }
       if (things[i] == null) continue;
@@ -444,14 +492,26 @@ function physics_tick() {
       }
       
       else if ((cur_tile.toLowerCase() !== new_tile.toLowerCase()) && !(new_tile == "3" && cur_tile == "d")) {
+          let tile_coords = [Math.floor(things[i].x),Math.floor(things[i].y)];
+      
           things[i].x -= things[i].vel_x;
           things[i].y -= things[i].vel_y;
           
-          things[i].vel_y *= -0.80;
-          things[i].vel_x *= -0.80;
+          var hit_x,hit_y = false;
           
-          things[i].vel_x += (Math.random()-0.5)*0.25;
-          things[i].vel_y += (Math.random()-0.5)*0.25;
+          if (!solidat(tile_coords[0]-1,tile_coords[1]) && things[i].x + things[i].vel_x >= tile_coords[0] && things[i].x < tile_coords[0]) hit_x = true;
+          if (!solidat(tile_coords[0]+1,tile_coords[1]) && things[i].x + things[i].vel_x <= tile_coords[0] + 1 && things[i].x > tile_coords[0] +1) hit_x = true;
+          if (!solidat(tile_coords[0],tile_coords[1]-1) && things[i].y + things[i].vel_y >= tile_coords[1] && things[i].y < tile_coords[1]) hit_y = true;
+          if (!solidat(tile_coords[0],tile_coords[1]+1) && things[i].y + things[i].vel_y <= tile_coords[1] + 1 && things[i].y > tile_coords[1] + 1) hit_y = true;
+          if (hit_x) {
+              things[i].vel_x *= -0.8;
+          }
+          if (hit_y) {
+              things[i].vel_y *= -0.8;
+          }
+          
+          things[i].vel_x += (Math.random()-0.5)*(things[i].vel_x*0.5);
+          things[i].vel_y += (Math.random()-0.5)*(things[i].vel_y*0.5);
       }
       
       cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
@@ -470,6 +530,12 @@ function physics_tick() {
       if (tormater[i] < 1) return;
   }
   do_tormater_score();
+}
+
+function solidat(x,y) {
+    if (x < 0 || x >= 32 || y < 0 || y >= 16) return true;
+    if (map[y].charAt[x] == "#") return true;
+    return false;
 }
 
 function do_tormater_score() {
@@ -506,8 +572,13 @@ function clear_msg() {
 
 setInterval(add_letters,2000);
 setInterval(physics_tick, 35);
-setInterval(draw, 20);
+var drawinterval = setInterval(draw, 20);
 setInterval(clock_tick,1000);
+
+function change_fps(fps) {
+    clearInterval(drawinterval);
+    drawinterval = setInterval(draw, 1000/fps);
+}
 
 </script>
   </body>
