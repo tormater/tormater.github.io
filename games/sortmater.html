@@ -161,8 +161,14 @@ function getampersand(x,y) {
 }
 
 function mousedata(e) {
-    mx = e.clientX/(canvas.width/32);
-    my = e.clientY/(canvas.height/16);
+    if (canvas.width < canvas.height) {
+      my = e.clientX/(canvas.width/16);
+      mx = e.clientY/(canvas.height/32);
+    }
+    else {
+      mx = e.clientX/(canvas.width/32);
+      my = e.clientY/(canvas.height/16);
+    }
 }
 
 function trygrab(e) {
@@ -255,14 +261,23 @@ function clock_tick() {
   timer++;
   for (let i = 0; i < things.length; i++) {
       if (things[i] == null) continue;
-      if (things[i] != grabbed_thing) continue;
+      if (things[i] == grabbed_thing) continue;
+      if (Math.hypot(things[i].x-mx,things[i].y-my) <= 2) continue;
       things[i].time = things[i].time + 1;
-      if (things[i].satisfied != true && things[i].time > 16 && Math.random() < 0.2) {
-          things[i] = null;
-          score -= 15;
-          if (score < 0) score = 0;
-          var sfx = new Audio('melt.ogg');
-          sfx.play();
+      if (things[i].satisfied != true && things[i].time > 12 && Math.random() < 0.3) {
+          if (things[i].letter == "F" || things[i].letter == "P") {
+              score -= 15;
+              if (score < 0) score = 0;
+              var sfx = new Audio('melt.ogg');
+              if (things[i].letter == "F") sfx = new Audio('melt2.ogg');
+              sfx.play();
+              things[i] = null;
+          }
+          else {
+              things[i].time = Math.floor(Math.random() * 8)-4;
+              things[i].letter = "F";
+              if (Math.random() < 0.5) things[i].letter = "P";
+          }
       }
   }
   things.filter(n => n);
@@ -271,7 +286,7 @@ function clock_tick() {
 const letters = ["T","O","R","M","A","T","E","R","F","P"];
 
 function add_letter() {
-  things.push({ x:16,y:15,vel_x:(Math.random()-0.5)/10,vel_y:Math.random()*-0.5,letter:letters[Math.floor(Math.random() * letters.length)],time:0,satisfied:false });
+  things.push({ x:16,y:15,vel_x:(Math.random()-0.5)/10,vel_y:Math.random()*-0.5,letter:letters[Math.floor(Math.random() * letters.length)],time:Math.floor(Math.random() * -8),satisfied:false });
 }
 
 
@@ -298,33 +313,52 @@ function draw() {
   let ww = canvas.width/32;
   let wh = canvas.height/16;
   
+  if (canvas.width < canvas.height) {
+      ww = canvas.width/16;
+      wh = canvas.height/32;
+  }
+  
   for (let i = 0; i < 16; i++) {
       for (let j = 0; j < 32; j++) {
           let rx = Math.floor(j * ww);
           let ry = Math.floor(i * wh);
+          if (canvas.width < canvas.height) {
+              rx = Math.floor(i * ww);
+              ry = Math.floor(j * wh);
+          }
           let rh = Math.ceil(wh);
           let rw = Math.ceil(ww);
           let tile = map[i].charAt(j);
-          let shift = 0;
-          if (j > 0 && map[i].charAt(j-1) == tile) shift = 4;
+          let shiftx = 0;
+          let shifty = 0;
+          if (j > 0 && map[i].charAt(j-1) == tile) shiftx = 4;
           
+          if (canvas.width < canvas.height) {
+              shifty = shiftx;
+              shiftx = 0;
+              if ((tile === tile.toLowerCase() || tile == "1") && tile != "!") {
+                  shiftx = 4;
+                  shifty -= 4;
+              }
+          }
+                    
           if (tile === "#") ctx.drawImage(sprite,0,0,16,16,rx, ry, rw, rh);
           else if (tile === "3") ctx.drawImage(sprite,16,0,16,16,rx, ry, rw, rh);
           else if (tile === "d") ctx.drawImage(sprite,32,0,16,16,rx, ry, rw, rh);
-          else if (tile === "T" || tile === "Y") ctx.drawImage(sprite,shift,16,4,4,rx, ry, rw, rh);
-          else if (tile === "t" || tile === "y") ctx.drawImage(sprite,shift,20,4,4,rx, ry, rw, rh);
-          else if (tile === "O") ctx.drawImage(sprite,8+shift,16,4,4,rx, ry, rw, rh);
-          else if (tile === "o") ctx.drawImage(sprite,8+shift,20,4,4,rx, ry, rw, rh);
-          else if (tile === "R" || tile === "G") ctx.drawImage(sprite,shift,24,4,4,rx, ry, rw, rh);
-          else if (tile === "r" || tile === "g") ctx.drawImage(sprite,shift,28,4,4,rx, ry, rw, rh);
-          else if (tile === "M") ctx.drawImage(sprite,8+shift,24,4,4,rx, ry, rw, rh);
-          else if (tile === "m") ctx.drawImage(sprite,8+shift,28,4,4,rx, ry, rw, rh);
-          else if (tile === "A") ctx.drawImage(sprite,16+shift,16,4,4,rx, ry, rw, rh);
-          else if (tile === "a") ctx.drawImage(sprite,16+shift,20,4,4,rx, ry, rw, rh);
-          else if (tile === "E") ctx.drawImage(sprite,16+shift,24,4,4,rx, ry, rw, rh);
-          else if (tile === "e") ctx.drawImage(sprite,16+shift,28,4,4,rx, ry, rw, rh);
-          else if (tile === "!") ctx.drawImage(sprite,24+shift,16,4,4,rx, ry, rw, rh);
-          else if (tile === "1") ctx.drawImage(sprite,24+shift,20,4,4,rx, ry, rw, rh);
+          else if (tile === "T" || tile === "Y") ctx.drawImage(sprite,shiftx,16+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "t" || tile === "y") ctx.drawImage(sprite,shiftx,20+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "O") ctx.drawImage(sprite,8+shiftx,16+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "o") ctx.drawImage(sprite,8+shiftx,20+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "R" || tile === "G") ctx.drawImage(sprite,shiftx,24+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "r" || tile === "g") ctx.drawImage(sprite,shiftx,28+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "M") ctx.drawImage(sprite,8+shiftx,24+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "m") ctx.drawImage(sprite,8+shiftx,28+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "A") ctx.drawImage(sprite,16+shiftx,16+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "a") ctx.drawImage(sprite,16+shiftx,20+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "E") ctx.drawImage(sprite,16+shiftx,24+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "e") ctx.drawImage(sprite,16+shiftx,28+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "!") ctx.drawImage(sprite,24+shiftx,16+shifty,4,4,rx, ry, rw, rh);
+          else if (tile === "1") ctx.drawImage(sprite,24+shiftx,20+shifty,4,4,rx, ry, rw, rh);
           
           if (fog == true) {
               let alpha = Math.hypot(player_x-j,player_y-i) / 8;
@@ -345,7 +379,13 @@ function draw() {
       if (things[i].letter == "E") {sx = 16; sy = 48;}
       if (things[i].letter == "F") {sx = 32; sy = 48;}
       if (things[i].letter == "P") {sx = 48; sy = 48;}
-      ctx.drawImage(sprite,sx,sy,16,16,(things[i].x-0.5) * ww, (things[i].y-0.5) * wh, ww, wh);
+      let x = things[i].x;
+      let y = things[i].y;
+      if (canvas.width < canvas.height) {
+          y = things[i].x;
+          x = things[i].y;
+      }
+      ctx.drawImage(sprite,sx,sy,16,16,(x-0.5) * ww, (y-0.5) * wh, ww, wh);
   }
   
   ctx.font = "30px monospace";
@@ -358,9 +398,19 @@ function draw() {
   ctx.strokeText(timerdisplay,0,60);
   ctx.fillText(timerdisplay,0,60);
   if (!text_bye) {
-      let info = "Earn points by spelling the word Tormater";
-      ctx.strokeText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
-      ctx.fillText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+      if (canvas.width < canvas.height) {
+          let info1 = "Earn points by spelling";
+          let info2 = "the word Tormater"
+          ctx.strokeText(info1,(canvas.width-(info1.length*18))/2,(canvas.height-30)/2);
+          ctx.fillText(info1,(canvas.width-(info1.length*18))/2,(canvas.height-30)/2);
+          ctx.strokeText(info2,(canvas.width-(info2.length*18))/2,(canvas.height+30)/2);
+          ctx.fillText(info2,(canvas.width-(info2.length*18))/2,(canvas.height+30)/2);
+      }
+      else {
+          let info = "Earn points by spelling the word Tormater";
+          ctx.strokeText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+          ctx.fillText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+      }
   }
 }
 
@@ -384,8 +434,13 @@ function physics_tick() {
       things[i].y += things[i].vel_y;
       let new_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
       
+      var t = new_tile.toLowerCase();
+      var l = things[i].letter.toLowerCase();
       if (new_tile == "!" || new_tile == "1") {
           things[i] = null;
+      }
+      else if (t === l || (t === "y" && l === "t") || (t === "g" && l === "r")) {
+          things[i].satisfied = true;
       }
       
       else if ((cur_tile.toLowerCase() !== new_tile.toLowerCase()) && !(new_tile == "3" && cur_tile == "d")) {
@@ -425,6 +480,10 @@ function do_tormater_score() {
         if (["T","t","O","o","R","r","M","m","A","a","Y","y","E","e","G","g"].includes(cur_tile)) {
            things[i] = null;
            score += 500;
+        }
+        else {
+           things[i].time = -8;
+           if (things[i].letter == "F" || things[i].letter == "P") things[i].letter = letters[Math.floor(Math.random() * (letters.length-2))];
         }
     }
     things.filter(n => n);
