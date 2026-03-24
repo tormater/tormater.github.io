@@ -264,9 +264,6 @@ body {
   text-shadow: 0px 0px 8px #36405c, 0px 0px 2px #1d1f26;
   background-position-x: 0%, 100%;
 }
-.project_title {
-  margin: 0px;
-}
 .page_title a {
   color: #000;
 }
@@ -277,12 +274,30 @@ body {
   color: #888;
 }
 
+.project_field {
+  border: 1px solid #0002;
+  padding: 12px;
+}
+
+.project_title {
+  font-size: 150%;
+}
+
 .project_banner {
   width: 100%;
   height: auto;
-  padding-bottom: 25px;
-  border-bottom: 1px dashed #aaa;
+}
+
+.project_seperator {
   margin-bottom: 25px;
+}
+
+.project_date {
+  margin-top: 5px;
+  display: block;
+  color: #000a;
+  font-style: italic;
+  text-align: right;
 }
 
 .project_gallery {
@@ -319,12 +334,11 @@ body {
 .project_columns {
   display: grid;
   grid-template-columns: 3fr 2fr;
-  gap: 30px;
+  gap: 22px;
 }
 
 .project_tab {
   padding: 5px 10px;
-  margin-top: 10px;
   border: 1px solid #9ad5db;
   background-image: linear-gradient(#fff, #bff9ff);
   display: inline-block;
@@ -338,10 +352,33 @@ body {
 .download {
   margin-bottom: 6px;
   display: inline-block;
+  padding: 2px 16px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #0002;
+  width: 100%;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+.download:last-child {
+  border-bottom: 0px;
 }
 .download img {
   vertical-align: middle;
   width: 24px;
+}
+.dl_big {
+  border: 1px solid #216cff;
+  border-radius: 5px;
+  background: linear-gradient(#afc8ff,#588dff 50%,#276ffe 50%,#69b4fe);
+  box-shadow: 0px 0px 3px #fff inset;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #165aef;
+}
+.dl_big:hover {
+  color: #fff;
+  text-decoration:none;
+  filter: brightness(120%);
 }
 .dl_big img {
   width: 48px;
@@ -354,6 +391,7 @@ body {
 }
 .dl_big span {
   font-size: 125%;
+  vertical-align: middle;
 }
 
 .card_green {
@@ -475,6 +513,15 @@ body {
   width: 24px;
 }
 
+.addon_dl:hover {
+  background: linear-gradient(#6de886,#fcfff9);
+  border-color: #29a230;
+}
+
+.mobile_only {
+  display: none;
+}
+
 @media only screen and (max-width: 1000px) {
   .project_columns {
     grid-template-columns: 1fr 1fr;
@@ -534,6 +581,9 @@ body {
   
   .project_gallery {
     display:block;
+  }
+  .mobile_only {
+    display:inline;
   }
 }
 
