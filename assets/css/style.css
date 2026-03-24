@@ -328,7 +328,7 @@ body {
   padding: 15px;
   border: 1px solid #9ad5db;
   background-image: linear-gradient(#fff, #bff9ff);
-  line-height: 150%;
+  line-height: 1.5;
 }
 
 .project_columns {
