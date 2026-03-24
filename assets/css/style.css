@@ -461,6 +461,12 @@ body {
   align-self: flex-end;
   display: inline-block;
   margin-top: auto;
+  border: 1px solid #348d34;
+  border-radius: 3px;
+  padding: 2px 8px;
+  background: linear-gradient(#86d763,#d9ffaa);
+  box-shadow: 0px 1px #fff6 inset;
+  color: #000;
 }
 .addon_dl img {
   border: none;
