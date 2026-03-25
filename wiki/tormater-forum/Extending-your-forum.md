@@ -19,4 +19,4 @@ If you've uploaded an extension, then simply open the Extensions page of the Adm
 
 ![image](https://github.com/user-attachments/assets/bba6eb05-36b5-4c82-a3f8-d5036ee6edd1)
 
-You can download extensions, themes, and languages from the [Addons]({{ "addons/" | absolute_url }}) page.
+You can download extensions, themes, and languages from the [Addons]({{ "addons" | absolute_url }}) page.
