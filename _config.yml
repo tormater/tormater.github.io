@@ -1,1 +1,10 @@
 name: Tormater.com
+
+defaults:
+  -
+    scope:
+      path: "wiki/tormater-forum"
+    values:
+      layout: "wiki"
+      wiki_name: Tormater Forum Wiki
+      wiki_path: "/wiki/tormater-forum/"
