@@ -106,3 +106,17 @@ blockquote p {
   filter: brightness(90%);
   color: #000;
 }
+
+table {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+td, th {
+  padding: 2px 4px;
+}
+
+table, td, th {
+  border: 1px solid #aaa;
+  border-collapse: collapse;
+}
