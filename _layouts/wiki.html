@@ -1,0 +1,17 @@
+---
+layout: default
+---
+
+<link rel="stylesheet" href="{{"assets/css/wiki.css" | absolute_url }}">
+
+<a class="wiki_tab wiki_tab_link" href="{{ page.wiki_path | absolute_url }}Home">{{ page.wiki_name }}</a> <span class="wiki_slash">→</span> <span class="wiki_tab">{{ page.title }}</span>
+
+<div class="wiki_content">
+  <span class="wiki_header">{{ page.title }}</span>
+  {{ content }}
+  <span class="wiki_footer">
+  <a class="wiki_edit_button wiki_edit_pink" href="https://github.com/tormater/tormater.github.io/edit/jekyll/{{ page.path }}">Edit on GitHub</a>
+  <a class="wiki_edit_button" href="https://github.com/tormater/tormater.github.io/commits/jekyll/{{ page.path }}">View history</a>
+  <a class="wiki_edit_button" href="https://github.com/tormater/tormater.github.io/blob/jekyll/{{ page.path }}">View source</a>
+  </span>
+</div>
