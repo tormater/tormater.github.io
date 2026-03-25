@@ -2,8 +2,7 @@
 layout: default
 ---
 
-<div class="card_{{ page.color }} project_tab">{{ page.title }}</div><div class="card_gold project_tab">
-<a href="#" onclick="navigator.clipboard.writeText('{{page.url | absolute_url }}')">Copy link</a></div><div class="card_red project_tab"><a href="{{"/projects" | absolute_url }}">Back to Projects</a></div>
+<div class="card_{{ page.color }} project_tab">{{ page.title }}</div>{% if page.wiki.size > 0 %}<div class="card_green project_tab"><a href="{{page.wiki | absolute_url }}Home">Project wiki</a></div>{% endif %}<div class="card_gold project_tab"><a href="#" onclick="navigator.clipboard.writeText('{{page.url | absolute_url }}')">Copy link</a></div><div class="card_red project_tab"><a href="{{"/projects" | absolute_url }}">Back to Projects</a></div>
 <div class="card_{{ page.color }} project_listing">
   <img class="project_banner" src="{{page.banner | absolute_url }}">
   <div class="project_seperator"></div>
