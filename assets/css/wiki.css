@@ -72,6 +72,11 @@ blockquote p {
     color: #036;
 }
 
+.n {
+    color: #070;
+    font-weight: bold;
+}
+
 .s2 {
     color: #052;
 }
