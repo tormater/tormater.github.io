@@ -38,6 +38,7 @@
     box-sizing: border-box;
     box-shadow: 1px 1px 3px #0004;
     margin: 15px 20px;
+    vertical-align: middle;
 }
 
 .wiki_content pre {
