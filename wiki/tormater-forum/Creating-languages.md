@@ -18,8 +18,8 @@ After that, just continue with all the language strings in the file, and then yo
 This section is optional, but if you want your language to have a proper name in the selector, create a json file with the same name as your language. (for example, if you were creating a manifest for `ES_ES.php`, it would be named `ES_ES.json`), and then fill it out as shown below:
 ```json
 {
-"name": "Spanish", 
-"region": "Spain", 
+"name": "Español", 
+"region": "España",
 "region_abbr": "ES"
 }
 ```
