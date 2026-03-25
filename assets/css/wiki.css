@@ -1,0 +1,108 @@
+.wiki_content {
+    border: 1px solid #a7c2c8;
+    padding: 20px;
+    line-height: 1.5;
+    background: linear-gradient(#fff,#effbfa);
+}
+
+.wiki_tab {
+    border: 1px solid #a7c2c8;
+    padding: 4px 8px;
+    display: inline-block;
+    border-bottom: 0px;
+    border-radius: 4px 4px 0px 0px;
+    background: #fff;
+    margin-bottom: -1px;
+}
+
+.wiki_tab_link {
+    background: linear-gradient(#fff,#cae0ff);
+}
+
+.wiki_slash {
+    color: #888;
+    padding: 4px 8px;
+    display: inline-block;
+}
+
+.wiki_header {
+    font-size: 175%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.wiki_content img {
+    max-width: 100%;
+    box-sizing: border-box;
+    box-shadow: 1px 1px 3px #0004;
+    margin: 15px 20px;
+}
+
+.wiki_content pre {
+    border: 1px solid #d5c083;
+    padding: 10px;
+    background: #fffedd;
+}
+
+code, code *{
+    font-family: monospace;
+}
+
+blockquote {
+  border-left: 2px solid #4965ff;
+  margin: 0px;
+  padding: 5px;
+  padding-left: 40px;
+  background: #ceddee;
+}
+
+blockquote p {
+  margin: 0px;
+}
+
+.kd, .k {
+    color: #a00;
+    font-weight: bold;
+}
+
+.nv, .nt {
+    color: #036;
+}
+
+.s2 {
+    color: #052;
+}
+
+.c1 {
+    color: #506;
+}
+
+.wiki_footer {
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+    margin-top: 10px;
+    display: block;
+}
+
+.wiki_edit_button {
+  display: inline-block;
+  border-radius: 3px;  
+  padding: 0px 6px;
+  border: 1px solid #8f9999;
+  background-image: linear-gradient(#e8f9f9,#bfcdcd);
+  text-shadow: 0px -1px #e8f9f9;
+  color: #000;
+}
+
+.wiki_edit_pink {
+  border: 1px solid #8c8c96;
+  background-image: linear-gradient(#e8e8f9,#bfbfcd);
+  text-shadow: 0px -1px #e8e8f9;
+}
+
+.wiki_edit_button:hover {
+  filter: brightness(90%);
+  color: #000;
+}
