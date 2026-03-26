@@ -7,12 +7,11 @@
 
 .wiki_tab {
     border: 1px solid #a7c2c8;
-    padding: 4px 8px;
+    padding: 3px 7px;
     display: inline-block;
     border-bottom: 0px;
     border-radius: 4px 4px 0px 0px;
     background: #fff;
-    margin-bottom: -1px;
 }
 
 .wiki_tab_link {
@@ -21,7 +20,7 @@
 
 .wiki_slash {
     color: #888;
-    padding: 4px 8px;
+    padding: 3px 7px;
     display: inline-block;
 }
 
