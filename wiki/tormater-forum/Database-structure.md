@@ -2,6 +2,8 @@
 title: Database structure
 ---
 
+> Notice: Information on this page is subject to change and may fall out of date. For more up-to-date information, please consult the queries section of the `install.php` file found [here](https://github.com/tormater/tormater-forum/blob/main/install/install.php#L96).
+
 ## Category structure
 
 | Field               | Value                                | Description                         |
