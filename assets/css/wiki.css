@@ -36,15 +36,16 @@
 .wiki_content img {
     max-width: 100%;
     box-sizing: border-box;
-    box-shadow: 1px 1px 3px #0004;
-    margin: 15px 20px;
+    padding: 15px 20px;
     vertical-align: middle;
+    filter: drop-shadow(1px 1px 3px #0004);
 }
 
 .wiki_content pre {
     border: 1px solid #d5c083;
     padding: 10px;
     background: #fffedd;
+    white-space: pre-wrap;
 }
 
 code, code *{
@@ -115,6 +116,7 @@ blockquote p {
 
 table {
   width: 100%;
+  table-layout: fixed;
   box-sizing: border-box;
 }
 
@@ -125,4 +127,5 @@ td, th {
 table, td, th {
   border: 1px solid #aaa;
   border-collapse: collapse;
+  word-break: break-word;
 }
