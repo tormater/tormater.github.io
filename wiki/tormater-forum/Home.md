@@ -11,10 +11,11 @@ title: Home
 - [Upgrading your forum]({{ "/wiki/tormater-forum/Upgrading-your-forum" | absolute_url }})
 - [Extending your forum]({{ "/wiki/tormater-forum/Extending-your-forum" | absolute_url }})
 
-### Documentation
+### Developer documentation
 - [Functions]({{ "/wiki/tormater-forum/Functions" | absolute_url }})
 - [Templates]({{ "/wiki/tormater-forum/Templates" | absolute_url }})
 - [Creating extensions]({{ "/wiki/tormater-forum/Creating-extensions" | absolute_url }})
+- [Creating themes]({{ "/wiki/tormater-forum/Creating-themes" | absolute_url }})
 - [Creating languages]({{ "/wiki/tormater-forum/Creating-languages" | absolute_url }})
 - [Database structure]({{ "/wiki/tormater-forum/Database-structure" | absolute_url }})
 
