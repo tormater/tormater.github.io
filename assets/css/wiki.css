@@ -64,16 +64,16 @@ blockquote p {
   margin: 0px;
 }
 
-.kd, .k {
+.kd, .k, .nl {
     color: #a00;
     font-weight: bold;
 }
 
-.nv, .nt {
+.nv, .nt, .nd {
     color: #036;
 }
 
-.n {
+.n, .py {
     color: #070;
     font-weight: bold;
 }
@@ -84,6 +84,10 @@ blockquote p {
 
 .c1 {
     color: #506;
+}
+
+.m {
+    color: #a08;
 }
 
 .wiki_footer {
