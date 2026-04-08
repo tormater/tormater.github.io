@@ -107,6 +107,7 @@ body {
 .header a {
   color: #fff;
   text-decoration: none;
+  text-shadow: 2px 2px 2px #0003;
 }
 .has_logo {
   background-image: url(logo.png), linear-gradient(#747f88, #525e71 50%, #4c596d 50%, #343c4f);
