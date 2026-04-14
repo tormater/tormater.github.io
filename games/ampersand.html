@@ -179,6 +179,7 @@ let titlescreen = true;
 let lastkeypress = ".";
 
 function keyDownHandler(e) {
+  e.preventDefault();
   if (titlescreen == true) {
       return;
   }

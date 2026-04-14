@@ -1,0 +1,165 @@
+.game_two_columns {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-gap: 10px;
+  line-height: 1.4;
+}
+
+.game_genre_list {
+  border: 1px solid #b0e6d2;
+}
+
+.game_genre_list ul {
+  padding: 10px;
+  list-style-type: none;
+  margin: 0px;
+  line-height: 1.8;
+}
+
+.game_genre_list li {
+  border-bottom: 1px solid #b0e6d2;
+  margin-bottom: 10px;
+}
+
+.game_genre_header {
+  background: #b0e6d2;
+  padding: 3px 4px;
+  padding-top: 1px;
+}
+
+.news_date {
+  color: #777;
+  display: block;
+  text-align: right;
+}
+
+
+.game_main {
+  border: 1px solid #dbb0e6;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  padding: 10px;
+  grid-gap: 10px;
+  background: linear-gradient(#fee1ff,#fff);
+}
+
+.game_img {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.game_main_info {
+  border-left: 1px solid #dbb0e6;
+  padding-left: 10px;
+}
+
+.game_header {
+  background: #dbb0e6;  
+  grid-column: span 2;
+  padding: 2px 4px;
+}
+
+.game_play_button {
+  border: 1px solid #216cff;
+  border-radius: 5px;
+  background: linear-gradient(#afc8ff,#588dff 50%,#276ffe 50%,#69b4fe);
+  box-shadow: 0px 0px 3px #fff inset;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #165aef;
+  padding: 5px 15px;
+  font-size: 150%;
+  display: inline-block;
+}
+.game_play_button:hover {
+  color: #fff;
+  text-decoration:none;
+  filter: brightness(120%);
+}
+
+.game_list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-gap: 10px;
+  line-height: 1.4;
+  padding: 10px;
+  border: 1px solid #b0e6d2;
+  border-top: none;
+}
+
+.game_listing {
+  background-color: #eee;
+  border: 1px solid #ccc;
+  padding: 10px;
+  color: #000;
+}
+
+.game_listing img {
+  box-shadow: 1px 1px 2px #ccc;
+}
+
+.game_list_header {
+  background: #b0e6d2;  
+  padding: 3px 5px;
+  line-height: 1.4;
+}
+
+.game_title, .game_title_coming_soon {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+}
+.game_title_coming_soon {
+  font-size: 150%;
+  margin: 10px 0px;
+}
+
+.game_frame {
+  width: 100%;
+  aspect-ratio: 16/9;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.game_details {
+  margin: 10px;
+  color: #555;
+}
+.game_details hr {
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.game_about {
+  line-height: 1.6;
+  padding: 10px;
+  border: 1px solid #b0cde6;
+  border-top: none;
+}
+
+.game_about_header {
+  background: #b0cde6;  
+  padding: 3px 5px;
+  line-height: 1.4;
+}
+
+.game_button {
+  display: block;
+  margin: 10px;
+  padding: 5px 10px;
+  border: 1px solid #8c8c8c;
+  border-radius: 3px;
+  background: linear-gradient(#d7d7d7,#fff);
+  box-shadow: 0px 1px #fff6 inset;
+  color: #000;
+}
+
+.game_controls {
+  table-layout: fixed;
+}
+
+.game_controls, .game_controls tr, .game_controls td, .game_controls th {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  padding: 2px 8px;
+}
