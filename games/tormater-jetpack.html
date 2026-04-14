@@ -1,0 +1,56 @@
+<img src="newlogo.png" class="logo">
+<h2>How would you like to experience this game?</h2>
+<div class="flex">
+
+<button onclick="window.location.href = `https://floatingbeans.github.io/jetpack-container/tormater-jetpack.html`">Latest Version <br>(from <a href="https://floatingbeans.github.io">floatingbeans.github.io</a>) <P>Newer Version, Directly from the Developer</P></button><br>
+<button onclick="window.location.href = `jetpack-game/tormater-jetpack.html`">Version Stored on Site <br><p>Might be Outdated, Better Stability</p></button>
+</div>
+<h3>your highscore will not transfer across these versions, they are hosted are on completely different servers.</h3>
+<style>
+    body {
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 250%;
+        padding-left: 5%;
+        padding-right: 5%;
+        background-color: cyan;
+        color: white;
+        background: url(BRICKS2.png) repeat-x;
+        animation: slide 5s ease-in-out infinite;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    @keyframes slide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-50px, 0, 0); /* The image width */
+  }
+}
+    h2 {
+        font-size: 100%;
+    }
+    button {
+        font-size:50%;
+        width: 35%;
+        height: 12%;
+    }
+    .flex {
+        display: flexbox;
+    }
+    button p {
+        font-size: 50%;
+        color: grey;
+    }
+    h3 {
+        font-size: 50%;
+        color: rgb(255, 255, 255);
+        padding-left: 12.5%;
+        padding-right: 12.5%;
+    }
+    .logo {
+        width: 800px;
+        height: 360px;
+    }
+</style>
