@@ -443,7 +443,7 @@ function draw() {
   ctx.strokeText(timerdisplay,0,60);
   ctx.fillText(timerdisplay,0,60);
   if (!text_bye) {
-      if (canvas.width < canvas.height) {
+      if (canvas.width < canvas.height || canvas.width < 768) {
           let info1 = "Earn points by spelling";
           let info2 = "the word Tormater"
           ctx.strokeText(info1,(canvas.width-(info1.length*18))/2,(canvas.height-30)/2);
