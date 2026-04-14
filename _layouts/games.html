@@ -1,0 +1,46 @@
+---
+layout: default
+games:
+  -
+    name: "Ampersand Quest"
+    url: "ampersand"
+    desc: "Embark on an ampersand-filled adventure."
+    rating: "4"
+  -
+    name: "Sortmater"
+    url: "sortmater"
+    desc: "Sort letters to form the word Tormater."
+    rating: "5"
+  -
+    name: "Tormater 2D"
+    url: "tor2d"
+    desc: "A top-down 2D shooter with heaps and heaps of Tormater™."
+    rating: "5"
+  -
+    name: "Tormater Jetpack"
+    url: "tormater-jetpack"
+    desc: "Pilot a jetpack-equipped Tormantle through a series of challenging obstacles."
+    rating: "5"
+---
+
+<link rel="stylesheet" href="{{"assets/css/games.css" | absolute_url }}">
+
+<h2 class="page_title">{{ page.title }}</h2>
+<br>
+
+{{ content }}
+
+<div class="game_list_header">Games</div>
+<div class="game_list">
+  {% for game in layout.games %}
+  <a href="{{ "game/" | absolute_url }}{{ game.url }}" class="game_listing">
+    <img class="game_img" src="{{ "assets/images/games/" | absolute_url }}{{ game.url }}.png">
+    <span class="game_title">{{ game.name }}</span>
+    <span class="game_desc">{{ game.desc }}</span>
+  </a>
+  {% endfor %}  
+  <div class="game_listing">
+    <span class="game_title_coming_soon">Coming soon!</span>
+    <span class="game_desc">There are more Tormater™ web games on the way!<br><br>Please be sure to check back here in the future for new or upcoming games.</span>
+  </div>
+</div>
