@@ -4,8 +4,9 @@ title: Customizing your forum
 
 Here's a short guide on how you can customize your forum to match your brand/site.<br/>
 ### Setting a color
+
 Go to your admin panel, select the radio button next to _New color_, then use the color picker to set a color.<br/>
-![image](https://user-images.githubusercontent.com/115832947/221003930-4b100c7c-55da-4650-810e-5f65deed7476.png)<br/>
+![image](https://github.com/user-attachments/assets/d4c582bf-46ba-4a9f-8919-7f727e4bf53c)<br/>
 Then, at the bottom of the page, click _Change settings_.<br/>
 ### Adding an image to your forum's header
 Navigate to your site via FTP.<br/>
