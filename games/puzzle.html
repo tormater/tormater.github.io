@@ -196,16 +196,16 @@ function draw() {
       ctx.filter = "none";
       canvas.fillstyle = "black";
   
-      ctx.font = "20px serif";
+      ctx.font = "18px serif";
       ctx.fillStyle = "#AC83FC";
       let score_display = `moves: ${moves}, level: ${difficulty}`;
       let timer2 = total_time + timer;
       let timerdisplay = `time: ${Math.floor(timer/60)}:${String(timer%60).padStart(2, '0')}, total: ${Math.floor(timer2/60)}:${String(timer2%60).padStart(2, '0')}`;
-      ctx.lineWidth = 4;
-      ctx.strokeText(score_display,0,30);
-      ctx.fillText(score_display,0,30);
-      ctx.strokeText(timerdisplay,0,60);
-      ctx.fillText(timerdisplay,0,60);
+      ctx.lineWidth = 3;
+      ctx.strokeText(score_display,2,20);
+      ctx.fillText(score_display,2,20);
+      ctx.strokeText(timerdisplay,2,40);
+      ctx.fillText(timerdisplay,2,40);
   }
   
   requestAnimationFrame(draw);
