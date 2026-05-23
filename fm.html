@@ -1,0 +1,47 @@
+---
+title: TormaterFM
+layout: default
+---
+
+<div class="tormaterfm_header"><img src="{{"assets/images/tormaterfm_big.png" | absolute_url }}" alt="tormaterfm"></div>
+<audio id="tormaterfm" preload="none">
+  <source src="https://radio.loonietick.com/listen/tormater_fm/radio.mp3">
+</audio>
+<div class="tormaterfm_listen">
+    <button class="mediaplayer_button" id="play"><img src="{{"assets/images/mediaplayer/play.png" | absolute_url }}" alt="Play"></button> 
+    <button class="mediaplayer_button" id="pause" style="display:none"><img src="{{"assets/images/mediaplayer/pause.png" | absolute_url }}" alt="Play"></button> 
+    <a class="mediaplayer_button" target="_blank" href="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"><img src="{{"assets/images/mediaplayer/link.png" | absolute_url }}"></img></a>
+    <div class="volume_area">
+      <img style="padding: 0px 5px; vertical-align:middle" src="{{"assets/images/mediaplayer/volume.png" | absolute_url }}"></img>
+      <input type="range" id="volume-slider" value=100>
+    </div>
+</div>
+<!--<div class="tormaterfm_songinfo">
+  <span>Now playing: <i id="tormaterfm_title">Unknown track</i></span>&nbsp;<span>00:00</span><span class="tormaterfm_slash">/</span><span>00:00</span>
+</div>-->
+<div class="tormaterfm_about">
+Welcome to TormaterFM!<br>TormaterFM is an internet-radio webcast which plays non-stop Tormater music, and much more, for free. You can listen to TormaterFM anywhere using the provided player above, or with any media player of your choice by copying the link above from the URL button. It's Tormater Time.<br>Tune in online to TormaterFM today!
+<br><br>TormaterFM has been generously hosted by <a href="https://loonietick.com">loonietick.com</a>. Show them some support!
+</div>
+
+<script>
+let volume = document.getElementById('volume-slider');
+let play = document.getElementById('play');
+let pause = document.getElementById('pause');
+
+play.addEventListener("click", function(e) {
+    document.getElementById('tormaterfm').play();
+    play.style.display = 'none';
+    pause.style.display = '';
+})
+
+pause.addEventListener("click", function(e) {
+    document.getElementById('tormaterfm').pause();
+    pause.style.display = 'none';
+    play.style.display = '';
+})
+
+volume.addEventListener("input", function(e) {
+    document.getElementById('tormaterfm').volume = e.currentTarget.value / 100;
+})
+</script>
