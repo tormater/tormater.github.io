@@ -63,9 +63,8 @@ function update_timer(change=1) {
 
 setInterval(update_timer, 1000);
 
-document.getElementById('tormaterfm').src = "https://radio.loonietick.com/listen/tormater_fm/radio.mp3?time=" + Date.now();
-
 play.addEventListener("click", function(e) {
+    document.getElementById('tormaterfm').src = "https://radio.loonietick.com/listen/tormater_fm/radio.mp3?time=" + Date.now();
     document.getElementById('tormaterfm').play();
     play.style.display = 'none';
     pause.style.display = '';
