@@ -78,13 +78,13 @@ play.addEventListener("click", function(e) {
       });
   
       navigator.mediaSession.setActionHandler("play", () => {
-        play.dispatchEvent(CustomEvent("click"));
+        play.dispatchEvent(new CustomEvent("click"));
       });
       navigator.mediaSession.setActionHandler("pause", () => {
-        pause.dispatchEvent(CustomEvent("click"));
+        pause.dispatchEvent(new CustomEvent("click"));
       });
       navigator.mediaSession.setActionHandler("stop", () => {
-        pause.dispatchEvent(CustomEvent("click"));
+        pause.dispatchEvent(new CustomEvent("click"));
       });
     }
 })
