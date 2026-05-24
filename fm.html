@@ -4,21 +4,19 @@ layout: default
 ---
 
 <div class="tormaterfm_header"><img src="{{"assets/images/tormaterfm_big.png" | absolute_url }}" alt="tormaterfm"></div>
-<audio id="tormaterfm" preload="none">
-  <source src="https://radio.loonietick.com/listen/tormater_fm/radio.mp3">
-</audio>
+<audio id="tormaterfm" preload="none" type="audio/mpeg" src="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"></audio>
 <div class="tormaterfm_listen">
     <button class="mediaplayer_button" id="play"><img src="{{"assets/images/mediaplayer/play.png" | absolute_url }}" alt="Play"></button> 
     <button class="mediaplayer_button" id="pause" style="display:none"><img src="{{"assets/images/mediaplayer/pause.png" | absolute_url }}" alt="Play"></button> 
-    <a class="mediaplayer_button" target="_blank" href="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"><img src="{{"assets/images/mediaplayer/link.png" | absolute_url }}"></img></a>
+    <a class="mediaplayer_button" target="_blank" href="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"><img src="{{"assets/images/mediaplayer/link.png" | absolute_url }}"></a>
     <div class="volume_area">
-      <img style="padding: 0px 5px; vertical-align:middle" src="{{"assets/images/mediaplayer/volume.png" | absolute_url }}"></img>
+      <img style="padding: 0px 5px; vertical-align:middle" src="{{"assets/images/mediaplayer/volume.png" | absolute_url }}">
       <input type="range" id="volume-slider" value=100>
     </div>
 </div>
-<!--<div class="tormaterfm_songinfo">
-  <span>Now playing: <i id="tormaterfm_title">Unknown track</i></span>&nbsp;<span>00:00</span><span class="tormaterfm_slash">/</span><span>00:00</span>
-</div>-->
+<div class="tormaterfm_songinfo">
+  <span>Now playing: <i id="tormaterfm_title">...</i></span>&nbsp;<span id="elapsed">00:00</span><span class="tormaterfm_slash">/</span><span id="total">00:00</span>
+</div>
 <div class="tormaterfm_about">
 Welcome to TormaterFM!<br>TormaterFM is an internet-radio webcast which plays non-stop Tormater music, and much more, for free. You can listen to TormaterFM anywhere using the provided player above, or with any media player of your choice by copying the link above from the URL button. It's Tormater Time.<br>Tune in online to TormaterFM today!
 <br><br>TormaterFM has been generously hosted by <a href="https://loonietick.com">loonietick.com</a>. Show them some support!
@@ -28,11 +26,68 @@ Welcome to TormaterFM!<br>TormaterFM is an internet-radio webcast which plays no
 let volume = document.getElementById('volume-slider');
 let play = document.getElementById('play');
 let pause = document.getElementById('pause');
+let title = document.getElementById('tormaterfm_title');
+var elapsed = -1;
+var remaining = -1;
+
+async function update_song_info() {
+    let response = await fetch("https://radio.loonietick.com/api/nowplaying/tormater_fm", {cache: "no-store"});
+    if (!response.ok) {
+      console.log("HTTP Error:", response.status);
+      return;
+    }
+    let data = await response.json();
+    elapsed = data.now_playing.elapsed;
+    remaining = data.now_playing.remaining;   
+    if (title.innerHTML === data.now_playing.song.text) return;
+    title.innerHTML = data.now_playing.song.text;
+    await update_timer(0); 
+}
+
+function update_timer(change=1) {
+    if (elapsed <= 0 || remaining <= 0) {
+        update_song_info();
+        return;
+    }
+    if (change) {
+        elapsed++;
+        remaining--;
+    }
+    let m = Math.floor(elapsed / 60);
+    let s = elapsed - (m * 60);
+    document.getElementById('elapsed').innerHTML = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
+    m = Math.floor((elapsed+remaining) / 60);
+    s = (elapsed+remaining) - (m * 60);
+    document.getElementById('total').innerHTML = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
+}
+
+setInterval(update_timer, 1000);
+
+document.getElementById('tormaterfm').src = "https://radio.loonietick.com/listen/tormater_fm/radio.mp3?time=" + Date.now();
 
 play.addEventListener("click", function(e) {
     document.getElementById('tormaterfm').play();
     play.style.display = 'none';
     pause.style.display = '';
+    
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: "TormaterFM",
+        artist: "Tormater.com",
+        album: "TormaterFM",
+        artwork: [{ src: "assets/images/tormaterfm_square.png" }],
+      });
+  
+      navigator.mediaSession.setActionHandler("play", () => {
+        play.dispatchEvent(CustomEvent("click"));
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        pause.dispatchEvent(CustomEvent("click"));
+      });
+      navigator.mediaSession.setActionHandler("stop", () => {
+        pause.dispatchEvent(CustomEvent("click"));
+      });
+    }
 })
 
 pause.addEventListener("click", function(e) {
@@ -44,4 +99,6 @@ pause.addEventListener("click", function(e) {
 volume.addEventListener("input", function(e) {
     document.getElementById('tormaterfm').volume = e.currentTarget.value / 100;
 })
+
+
 </script>
