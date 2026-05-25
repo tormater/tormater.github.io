@@ -2,6 +2,12 @@
   font-family: Arial, sans-serif;
 }
 
+::selection {
+  text-shadow: none;
+  background: #58b;
+  color: #fff;
+}
+
 a {
   color: #00f;
   text-decoration: none;
