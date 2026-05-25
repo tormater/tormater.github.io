@@ -622,6 +622,7 @@ body {
   border: 1px solid #9bacc6;
   background: linear-gradient(125deg, #d8e6ee,#fff);
   text-shadow: 1px 1px 0px #fff;
+  line-height: 1.5;
 }
 
 @media only screen and (max-width: 1000px) {
