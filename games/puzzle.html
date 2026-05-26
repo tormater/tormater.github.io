@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tormater Puzzle</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        overscroll-behavior: none;
+        overscroll-behavior-y: contain;
+      }
+      canvas {
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="sprite" src="puzzles.png" style="display:none">
+    <img id="title" src="puzzle_titlescreen.png" style="display:none">
+    <canvas id="myCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+var sprite = document.getElementById("sprite");
+var title = document.getElementById("title");
+
+var music = new Audio('puzzle_music.ogg');
+music.loop = true;
+var moves = 0;
+let timer = 0;
+let win_page = false;
+let titlescreen = true;
+var mx, my;
+var tile_count = 4;
+var tiles = [];
+var img = {x:0,y:0};
+var finished = [];
+var dragged_tile = null;
+var difficulty = 0;
+var total_time = 0;
+
+var cheat = false;
+
+function keyUpHandler(e) {
+  if (titlescreen == true) {
+      return;
+  }
+  if (e.key == "c") cheat = false;
+  if (e.key == "r") {
+      titlescreen = true;
+      music.pause();
+      music.currentTime = 0;
+  }
+}
+
+function keyDownHandler(e) {
+  if (titlescreen == true) {
+      return;
+  }
+  if (e.key == "c") cheat = true;
+}
+
+document.addEventListener("keydown", keyDownHandler);
+document.addEventListener("keyup", keyUpHandler);
+
+var grab = new Audio('grab.ogg');
+grab.volume = 0.5;
+var place = new Audio('place.ogg');
+place.volume = 0.5;
+var win = new Audio('puzzlewin.ogg');
+
+
+function mousedata(e) {
+    mx = Math.floor(e.clientX / (canvas.width/tile_count));
+    my = Math.floor(e.clientY / (canvas.height/tile_count));
+}
+
+function trygrab(e) {
+    if (titlescreen == true) {
+        setup();
+        return;
+    }
+    /*if (dragged_tile != null) {
+        if (dragged_tile.x == mx && dragged_tile.y == my) return;
+        swap_tiles(dragged_tile,{x:mx,y:my});
+        dragged_tile = null;
+        moves++;
+        check_win();
+        return;
+    }*/
+    dragged_tile = {x:mx,y:my};
+    grab.play();
+}
+
+function releasegrab(e) {
+    if (titlescreen == true) {
+        return;
+    }
+    if (dragged_tile == null/* || (dragged_tile.x == mx && dragged_tile.y == my)*/) return;
+    swap_tiles(dragged_tile,{x:mx,y:my});
+    dragged_tile = null;
+    moves++;
+    check_win();
+    place.play();
+}
+
+function check_win() {
+    if (JSON.stringify(tiles) === JSON.stringify(finished)) {
+        win_page = true;
+        titlescreen = true;
+        win.play();
+    }
+}
+
+function swap_tiles(a,b) {
+    temp = tiles[a.x][a.y];
+    tiles[a.x][a.y] = tiles[b.x][b.y];
+    tiles[b.x][b.y] = temp;
+}
+
+canvas.addEventListener("pointermove", mousedata);
+canvas.addEventListener("pointerdown", trygrab);
+canvas.addEventListener("pointerup", releasegrab);
+
+function setup() {
+  total_time += timer;
+  timer = 0;
+  music.play();
+  moves = 0;
+  difficulty++;
+  tile_count = Math.floor((Math.random() * 4) + 1) + difficulty;
+  
+  img.x = Math.floor(Math.random()*4);
+  img.y = Math.floor(Math.random()*4);
+  
+  
+  for (let i = 0; i < tile_count*Math.min(difficulty,tile_count); i++) {
+      tiles[i] = [];
+      for (let j = 0; j < tile_count; j++) {
+          tiles[i][j] = {x:i,y:j};
+      }
+  }
+  finished = JSON.parse(JSON.stringify(tiles));
+  
+  for (let i = 0; i < tile_count; i++) {
+      swap_tiles({x:Math.floor(Math.random()*tile_count),y:Math.floor(Math.random()*tile_count)},{x:Math.floor(Math.random()*tile_count),y:Math.floor(Math.random()*tile_count)});
+  }
+  if (JSON.stringify(tiles) === JSON.stringify(finished)) {
+      swap_tiles({x:0,y:0},{x:1,y:1});
+  }
+  titlescreen = false;
+}
+
+function clock_tick() {
+  if (titlescreen == true) {
+      return;
+  }
+  timer++;
+}
+
+var cheatalpha = 0;
+
+function draw() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  if (titlescreen == true) {
+      ctx.drawImage(title,0,0,canvas.width,canvas.height);
+  }
+  
+  else {
+      for (let i = 0; i < tiles.length; i++) {
+          for (let j = 0; j < tiles[i].length; j++) {
+              ctx.filter = "none";
+              if (mx == i && my == j) ctx.filter = "brightness(80%)";
+              ctx.drawImage(sprite,(img.x*128) + tiles[i][j].x * (128/tile_count),(img.y*128) + tiles[i][j].y * (128/tile_count),128/tile_count,128/tile_count,
+              i * (canvas.width/tile_count),j * (canvas.height/tile_count),canvas.width/tile_count - 1,canvas.height/tile_count - 1);
+              
+          }
+      }
+      if (cheat) {
+          if (cheatalpha < 100) cheatalpha += 2;
+      }
+      else if (cheatalpha > 0) cheatalpha -= 2;
+      if (cheatalpha > 0) {
+          ctx.filter = `opacity(${cheatalpha}%)`;
+          ctx.drawImage(sprite,(img.x*128),(img.y*128),128,128,0,0,canvas.width,canvas.height);
+      }
+  }
+  
+  if ((titlescreen == true && win_page == true) || titlescreen == false) {
+      ctx.filter = "none";
+      canvas.fillstyle = "black";
+  
+      ctx.font = "18px serif";
+      ctx.fillStyle = "#AC83FC";
+      let score_display = `moves: ${moves}, level: ${difficulty}`;
+      let timer2 = total_time + timer;
+      let timerdisplay = `time: ${Math.floor(timer/60)}:${String(timer%60).padStart(2, '0')}, total: ${Math.floor(timer2/60)}:${String(timer2%60).padStart(2, '0')}`;
+      ctx.lineWidth = 3;
+      ctx.strokeText(score_display,2,20);
+      ctx.fillText(score_display,2,20);
+      ctx.strokeText(timerdisplay,2,40);
+      ctx.fillText(timerdisplay,2,40);
+  }
+  
+  requestAnimationFrame(draw);
+}
+
+
+draw();
+setInterval(clock_tick,1000);
+
+</script>
+  </body>
+</html>
