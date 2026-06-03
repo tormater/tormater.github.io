@@ -26,7 +26,6 @@ body {
 }
 #body {
   background: #f0f0f0;
-  padding: 0px 1px 1px 1px;
   display: grid;
   grid-template-columns: 200px auto;
   max-width: 1200px;
@@ -34,7 +33,7 @@ body {
 }
 #footer {
   padding: 15px;
-  max-width: 1202px;
+  max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
   border: 1px solid #f0f0f0;
@@ -99,6 +98,7 @@ body {
 
 #content .lower {
   border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .header {
