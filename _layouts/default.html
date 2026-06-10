@@ -8,21 +8,22 @@
   
   <title>{{ page.title }} | Tormater.com</title>
   <meta name="description" content="Tormater.com: The official homepage of the Tormater Community.">
-  <meta name="keywords" content="tormater, tor mater, php, gzdoom, zdoom, software, development">
+  <meta name="keywords" content="tormater, tor mater, tormater™, php, gzdoom, zdoom, software, development">
   <meta name="author" content="Tormater Organization">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#556379">
   
-  <meta property="og:title" content="Tormater.com: The official Tormater website.">
-  <meta property="og:description" content="Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.">
-  <meta property="og:image" content="{{"assets/images/forum.png" | absolute_url }}">
+  
+  <meta property="og:title" content="{% if page.meta_title.size > 0 %}{{ page.meta_title }}{% else %}{{ page.title }} | Tormater.com{% endif %}">
+  <meta property="og:description" content="{{ page.meta_desc }}">
+  <meta property="og:image" content="{{page.meta_img | absolute_url }}">
   <meta property="og:type" content="website">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:url" content="https://tormater.com/">
-  <meta property="twitter:title" content="Tormater.com: The official Tormater website.">
-  <meta property="twitter:description" content="Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.">
-  <meta property="twitter:image" content="{{"assets/images/forum.png" | absolute_url }}">
+  <meta property="twitter:title" content="{% if page.meta_title.size > 0 %}{{ page.meta_title }}{% else %}{{ page.title }} | Tormater.com{% endif %}">
+  <meta property="twitter:description" content="{{ page.meta_desc }}">
+  <meta property="twitter:image" content="{{page.meta_img | absolute_url }}">
 </head>
 <body>
   <div id="body">
