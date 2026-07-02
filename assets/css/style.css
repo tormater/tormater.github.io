@@ -16,6 +16,14 @@ a:hover {
   color: #44f;
   text-decoration: underline;
 }
+.text_with_icon > span {
+  vertical-align: middle;
+}
+.text_with_icon > img {
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
 html {
   background: #fff;
   font-size: 13px;
