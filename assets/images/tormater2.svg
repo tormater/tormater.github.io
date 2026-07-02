@@ -28,9 +28,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="7.4974187"
-     inkscape:cx="-0.20006886"
-     inkscape:cy="-0.26675848"
+     inkscape:zoom="10.602951"
+     inkscape:cx="4.7156682"
+     inkscape:cy="7.6393825"
      inkscape:window-width="1366"
      inkscape:window-height="700"
      inkscape:window-x="0"
@@ -92,18 +92,17 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.73401px;font-family:Pricedown;-inkscape-font-specification:Pricedown;letter-spacing:0.0770853px;fill:url(#linearGradient1039);fill-opacity:1;stroke:url(#linearGradient1845);stroke-width:0.683503;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers;stop-color:#000000"
-       x="0.75173301"
-       y="3.7723126"
+    <g
+       aria-label="II"
+       transform="scale(0.97333304,1.0273976)"
        id="text790"
-       transform="scale(0.97333304,1.0273976)"><tspan
-         sodipodi:role="line"
-         id="tspan788"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Pricedown;-inkscape-font-specification:Pricedown;fill:url(#linearGradient1039);fill-opacity:1;stroke:url(#linearGradient1845);stroke-width:0.683503;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-         x="0.75173301"
-         y="3.7723126"
-         dx="0">II</tspan></text>
+       style="font-size:6.73401px;font-family:Pricedown;-inkscape-font-specification:Pricedown;letter-spacing:0.0770853px;fill:url(#linearGradient1039);stroke:url(#linearGradient1845);stroke-width:0.683503;stroke-linejoin:round;paint-order:stroke fill markers;stop-color:#000000">
+      <path
+         d="M 0.89314722,3.7723126 V 0.35816946 H 2.0042589 V 3.7723126 Z"
+         id="path344" />
+      <path
+         d="M 2.3574344,3.7723126 V 0.35816946 H 3.4685461 V 3.7723126 Z"
+         id="path346" />
+    </g>
   </g>
 </svg>
