@@ -475,11 +475,11 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   gap: 15px;
   max-width: 100%;
+  margin-top:15px
 }
 
 .addon_card {
   padding: 15px;
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
 }
@@ -504,6 +504,12 @@ body {
 }
 .addon_card img {
   max-width: 100%;
+}
+
+.addon_filler {
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  background: linear-gradient(#e8e8e8,#fff);
 }
 
 .card_extension {
