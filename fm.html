@@ -5,9 +5,11 @@ meta_img: "/assets/images/tormaterfm_big.png"
 meta_desc: "TormaterFM is an internet-radio webcast which plays non-stop Tormater music, and much more, for free."
 ---
 
+<link rel="stylesheet" href="{{"assets/css/char.css" | absolute_url }}">
 <div class="tormaterfm_header"><img src="{{"assets/images/tormaterfm_big.png" | absolute_url }}" alt="tormaterfm"></div>
 <audio id="tormaterfm" preload="none" type="audio/mpeg" src="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"></audio>
 <div class="tormaterfm_listen">
+    <div id="girl" class="girl-sitting1" onclick="change_girl_animation('clicked')"></div>
     <button class="mediaplayer_button" id="play"><img src="{{"assets/images/mediaplayer/play.png" | absolute_url }}" alt="Play"></button> 
     <button class="mediaplayer_button" id="pause" style="display:none"><img src="{{"assets/images/mediaplayer/pause.png" | absolute_url }}" alt="Play"></button> 
     <a class="mediaplayer_button" target="_blank" href="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"><img src="{{"assets/images/mediaplayer/link.png" | absolute_url }}"></a>
@@ -29,8 +31,17 @@ let volume = document.getElementById('volume-slider');
 let play = document.getElementById('play');
 let pause = document.getElementById('pause');
 let title = document.getElementById('tormaterfm_title');
+let girl = document.getElementById('girl');
+var girl_animation_index = 0;
+var girl_animation = "sitting";
+let g_anims = {
+    "sitting":[{c:"sit2",m:"-14px",t:20},{c:"sit1",m:"-14px",t:30},{c:"sit2",m:"-14px",t:20},{c:"sit4",m:"-14px",t:20},{c:"sit5",m:"-14px",t:30},{c:"sit4",m:"-14px",t:20}],
+    "clicked":[{c:"click1",m:"-7px",t:15},{c:"click2",m:"-28px",t:20},{c:"click2",m:"-14px",t:20},{c:"sit3",m:"-14px",t:30}]
+};
 var elapsed = -1;
 var remaining = -1;
+
+var oh = new Audio('{{"assets/sound/girl_click.ogg" | absolute_url }}');
 
 async function update_song_info() {
     let response = await fetch("https://radio.loonietick.com/api/nowplaying/tormater_fm", {cache: "no-store"});
@@ -63,7 +74,28 @@ function update_timer(change=1) {
     document.getElementById('total').innerHTML = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
 }
 
+function animate_girl() {
+    if (girl_animation_index >= g_anims[girl_animation].length) {
+        girl_animation_index = 0;
+        girl_animation = "sitting";
+    }
+    girl.className = "girl-" + g_anims[girl_animation][girl_animation_index].c;
+    girl.style["margin-top"] = g_anims[girl_animation][girl_animation_index].m;
+    setTimeout(animate_girl,g_anims[girl_animation][girl_animation_index].t*10);
+    girl_animation_index++;
+}
+
+function change_girl_animation(new_anim) {
+    if (new_anim == "clicked") {
+        oh.play();
+    }
+    girl_animation = new_anim;
+    girl_animation_index = 0;
+}
+
 setInterval(update_timer, 1000);
+
+animate_girl();
 
 play.addEventListener("click", function(e) {
     document.getElementById('tormaterfm').src = "https://radio.loonietick.com/listen/tormater_fm/radio.mp3?time=" + Date.now();
