@@ -1,0 +1,71 @@
+#girl {
+    background-image: url(tormaterfmgirl.png);
+    background-repeat: no-repeat;
+    display: block;
+    position: absolute;
+    z-index: 1;
+    transform: scale(2); 
+    image-rendering: pixelated;
+    margin-top: -14px;
+    margin-left: 590px;
+    transition: margin-top 0.25s;
+}
+
+@media only screen and (max-width: 1100px) {
+    #girl {
+        margin-left: 370px;
+        pointer-events: none;
+    }
+}
+
+#girl:hover {
+    cursor: pointer;
+}
+
+.girl-click1 {
+    width: 28px;
+    height: 67px;
+    background-position: -2px -2px;
+}
+
+.girl-click2 {
+    width: 29px;
+    height: 65px;
+    background-position: -34px -2px;
+}
+
+.girl-sit1 {
+    width: 26px;
+    height: 67px;
+    background-position: -67px -2px;
+}
+
+.girl-sit2 {
+    width: 26px;
+    height: 67px;
+    background-position: -97px -2px;
+}
+
+.girl-sit3 {
+    width: 26px;
+    height: 67px;
+    background-position: -127px -2px;
+}
+
+.girl-sit4 {
+    width: 26px;
+    height: 67px;
+    background-position: -157px -2px;
+}
+
+.girl-sit5 {
+    width: 26px;
+    height: 67px;
+    background-position: -187px -2px;
+}
+
+.girl-sitting1 {
+    width: 26px;
+    height: 69px;
+    background-position: -217px -2px;
+}
