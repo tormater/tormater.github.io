@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Billiards</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        overscroll-behavior: none;
+        overscroll-behavior-y: contain;
+      }
+      canvas {
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="sprite" src="billiards_sheet.png" style="display:none">
+    <img id="title" src="billiards_title.png" style="display:none">
+    <canvas id="myCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+var sprite = document.getElementById("sprite");
+var title = document.getElementById("title");
+
+var music = new Audio('billiardstheme.ogg');
+music.loop = true;
+var levels = 5;
+var moves = 0;
+var score = 0;
+var p2_score = 0;
+
+var turn = 0;
+
+let map_time = [0];
+let map_fog = [0];
+let maps = [
+[
+"################################",
+"#0mdddddddddddX0Cdddddddddddv0##",
+"#n333333333333333333333333333b##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#d333333333333333333333333333d##",
+"#v333333333333333333333333333m##",
+"#0bdddddddddddx0cdddddddddddn0##",
+"################################"
+]
+];
+let map = ["pray there will be ampersands today"];
+let player_x = 0;
+let player_y = 0;
+let player_keys = [0,0,0];
+let fog = true;
+
+let ampersands = 0;
+let level = 0;
+let timer = 0;
+let win_page = false;
+let can_move = false;
+let text_bye = false;
+
+let titlescreen = true;
+let lastkeypress = ".";
+
+let things=[];
+var grabbed_thing;
+var cueball = true;
+var mx, my;
+var hiscore = 0;
+var hiscore_time = 0;
+var last_phys_tick = 0;
+
+var melt1 = new Audio('melt.ogg');
+var melt2 = new Audio('melt2.ogg');
+var ballaudio = new Audio('ball.ogg');
+
+function keyDownHandler(e) {
+  if (titlescreen == true) {
+      return;
+  }
+  lastkeypress = e.key;
+  switch (e.key) {
+    case "ArrowLeft":
+        moveplayer(player_x-1,player_y);
+        break;
+    case "ArrowRight":
+        moveplayer(player_x+1,player_y);
+        break;
+    case "ArrowUp":
+        moveplayer(player_x,player_y-1);
+        break;
+    case "ArrowDown":
+        moveplayer(player_x,player_y+1);
+        break;
+  }
+  //draw();
+}
+
+function changemaptile(x,y,chr) {
+    map[y] = map[y].substring(0,x) + chr + map[y].substring(x+1);
+}
+
+function moveplayer(x,y) {
+  return;
+}
+
+function teleport(x,y) {
+    return;
+}
+
+function open_door(x,y) {
+    return;
+}
+
+let edit = false;
+
+function editor(e) {
+    if (edit != true) return;
+    if (!(event.buttons & 1)) return;
+    let ww = canvas.width/31;
+    let wh = canvas.height/16;
+    if (lastkeypress === "$") {
+        player_x = Math.floor(e.clientX/ww);
+        player_y = Math.floor(e.clientY/wh);
+    }
+    else changemaptile(Math.floor(e.clientX/ww),Math.floor(e.clientY/wh),lastkeypress[0]);
+    
+    console.log("Map:");
+    var mapstr = "";
+    for (let i = 0; i < 16; i++) {
+        mapstr = mapstr + "\"" + map[i] + "\",\n";
+    }
+    
+    console.log(mapstr);
+    
+    //draw();
+}
+
+function killplayer() {
+    titlescreen = true;
+    music.pause();
+    music.currentTime = 0;
+    things = [];
+    grabbed_thing = null;
+    var sfx = new Audio('die.ogg');
+    sfx.play();
+    if (score > hiscore) {
+        hiscore = score;
+        hiscore_time = timer;
+    }    
+    timer = 0;
+    score = 0;
+}
+
+function getkey(x,y,type) {
+    return;
+}
+
+function getampersand(x,y) {
+    return false;
+}
+
+function mousedata(e) {
+    if (canvas.width < canvas.height) {
+      my = e.clientX/(canvas.width/16);
+      mx = e.clientY/(canvas.height/32);
+    }
+    else {
+      mx = e.clientX/(canvas.width/31);
+      my = e.clientY/(canvas.height/16);
+    }
+    if (grabbed_thing != null) {
+      grabbed_thing.vel_x = mx-grabbed_thing.x;
+      grabbed_thing.vel_y = my-grabbed_thing.y;
+    }
+}
+
+function trygrab(e) {
+    mousedata(e);
+    let dist = 32767;
+    var closest;
+    for (let i = 0; i < things.length; i++) {
+        if (things[i] == null) continue;
+        let temp_dist = Math.hypot(things[i].x-mx,things[i].y-my);
+        if (temp_dist < dist) {
+            closest = things[i];
+            dist = temp_dist;
+        }
+    }
+    if (dist <= 4) {
+        grabbed_thing = closest;
+        grabbed_thing.time = 0;
+        var sfx = new Audio('grab.ogg');
+        sfx.play();
+    }
+}
+
+function releasegrab(e) {
+    mousedata(e);
+    if (titlescreen == true) {
+        setup();
+    }
+    if (grabbed_thing == null) return;
+    if (grabbed_thing.vel_x == 0 && grabbed_thing.vel_y == 0) {
+        grabbed_thing.vel_x=(Math.random()-0.5)/2;
+        grabbed_thing.vel_y=(Math.random()-0.5)/2;
+    }
+    else {
+        var len = Math.hypot(grabbed_thing.vel_x,grabbed_thing.vel_y)*4;
+        grabbed_thing.vel_x /= len;
+        grabbed_thing.vel_y /= len;
+    }
+    var sfx = new Audio('place.ogg');
+    t = map[Math.floor(my)].charAt(Math.floor(mx)).toLowerCase();
+    y = grabbed_thing.letter.toLowerCase();
+    if (t == y) {}
+    else if (t == "3" || t == "#") {}
+    else if ((t == "!" || t == "1") && (y == "f" || y == "p")) {
+        score += 35;
+        sfx = new Audio('burn.ogg');
+    }
+    else if (t == "y" && y == "t") {}
+    else if (t == "g" && y == "r") {}
+    else {killplayer(); return;}
+    if (t != "3" && t != "#") {
+        grabbed_thing.satisfied = true;
+    }
+    grabbed_thing = null;
+    sfx.play();
+}
+
+var cuex, cuey;
+var p2_cuex, p2_cuey;
+var p2_mx, p2_my;
+var p2_goalx = undefined;
+var p2_goaly = undefined;
+var p2_targetthing = undefined;
+var p2_action = 0;
+var p2_delay = 0;
+var turn = 0;
+var cueball_struck = 0;
+
+function opponent_pursue_goal() {
+    if (p2_goalx == undefined || p2_goaly == undefined) return;
+    dx = p2_goalx-p2_mx;
+    dy = p2_goaly-p2_my;
+    l = Math.hypot(dx,dy);
+    if (l < 0.05) return;
+    dx /= l;
+    dy /= l;
+    xm = Math.sin(p2_mx)+5;
+    ym = Math.sin(p2_my)+5;
+    p2_mx += dx/xm;
+    p2_my += dy/ym;
+    p2_mx += Math.random()/64;
+    p2_my += Math.random()/64;    
+}
+
+function goal_completed(d) {
+    dx = p2_goalx-p2_mx;
+    dy = p2_goaly-p2_my;
+    l = Math.hypot(dx,dy);
+    if (l <= d) return true;
+    return false;
+}
+
+function find_ball() {
+    for (let i = 0; i < things.length; i++) {
+        if (things[i] != null && typeof things[i].fakeball == 'undefined' && things[i].letter != "16") {
+            return things[i];
+        }
+    }
+}
+
+function opponent_tick() {
+    if (p2_delay > 0) {
+        p2_delay--;
+        return;
+    }
+    if (cueball_struck) return;
+    var qball = undefined;
+  
+    for (let i = 0; i < things.length; i++) {
+        if (things[i] != null && things[i].letter == "16") {
+            qball = things[i];
+            break;
+        }
+    }
+    if (qball == undefined) return console.log("Cue ball could not be found :(");
+    if (p2_action <= 0 && p2_goalx == undefined) {
+        p2_goalx = qball.x;
+        p2_goaly = qball.y;
+    }
+    if (p2_action == 0 && goal_completed(0.5)) {
+        p2_action = 1;
+        p2_targetthing = find_ball();
+        dx = p2_targetthing.x-qball.x;
+        dy = p2_targetthing.y-qball.y;
+        l = Math.hypot(dx,dy)*2;
+        p2_goalx = qball.x - dx/l;
+        p2_goaly = qball.y - dy/l;
+        p2_delay = 1;
+    }
+    if (p2_action == 1 && goal_completed(0.1)) {
+        p2_cuex = p2_mx;
+        p2_cuey = p2_my;
+        p2_action = 2;
+        dx = p2_targetthing.x-qball.x;
+        dy = p2_targetthing.y-qball.y;
+        l = Math.hypot(dx,dy)/(2+(Math.random()*8));
+        p2_goalx = qball.x + (Math.random()/6) - dx/l ;
+        p2_goaly = qball.y + (Math.random()/6)  - dy/l;
+        var sfx = new Audio('grab.ogg');
+        sfx.play();
+        p2_delay = 16;
+    }
+    if (p2_action == 2 && goal_completed(0.1)) {
+        var sfx = new Audio('place.ogg');
+        sfx.play();
+    
+        things.push({ x:p2_cuex,y:p2_cuey,vel_x:(p2_cuex-p2_mx)/6,vel_y:(p2_cuey-p2_my)/6,letter:"1",fakeball:true, faketimer:24});
+        p2_cuex = null;
+        p2_cuey = null;
+        p2_goalx = undefined;
+        p2_action = 0;
+        p2_delay = 8;
+    }
+    
+    opponent_pursue_goal();
+}
+
+function aimcue(e) {
+    if (titlescreen == true) {
+        return;
+    }
+    mousedata(e);    
+    if (cueball == false || turn || cueball_struck) return;
+    if (cuex != null || cuey != null) return;
+    cuex = mx;
+    cuey = my;
+    
+    var sfx = new Audio('grab.ogg');
+    sfx.play();
+}
+
+function releasecue(e) {
+    if (titlescreen == true) {
+        setup();
+        return;
+    }
+    mousedata(e);
+    
+    var sfx = new Audio('place.ogg');
+    sfx.play();
+    
+    if (cueball == false) {
+        things.push({ x:mx,y:my,vel_x:0,vel_y:0,letter:"16"});
+        cueball = true;
+        return;
+    }
+    if (!turn && !cueball_struck) things.push({ x:cuex,y:cuey,vel_x:(cuex-mx)/6,vel_y:(cuey-my)/6,letter:"1",fakeball:true, faketimer:12});
+    cuex = null;
+    cuey = null;
+}
+
+document.addEventListener("keydown", keyDownHandler);
+canvas.addEventListener("pointermove", mousedata);
+canvas.addEventListener("pointerdown", aimcue);
+canvas.addEventListener("pointerup", releasecue);
+
+function setup() {
+  if (level > levels) {
+      titlescreen = true;
+      win_page = true;
+      music.pause();
+      music.currentTime = 0;
+      return;
+  }
+  
+  if (text_bye) {
+      add_letter();
+  }
+  else setInterval(clear_msg,4000);
+  
+  add_billiard_balls();
+  timer = map_time[level];
+  map = maps[level].slice();
+  fog = map_fog[level];
+  can_move = false;
+  player_keys = [0,0,0];
+  ampersands = 0;
+  p2_mx = 16;
+  p2_my = 8;
+  score = 0;
+  p2_score = 0;
+  for (let i = 0; i < 16; i++) {
+      for (let j = 0; j < 32; j++) {
+          if (map[i].charAt(j) === "$") {
+              player_x = j;
+              player_y = i;
+          }
+          if (map[i].charAt(j) === "&") {
+              ampersands = ampersands + 1;
+          }
+      }
+  }
+  music.currentTime = 0;
+  music.play();
+  titlescreen = false;
+}
+
+function clock_tick() {
+  if (titlescreen == true) {
+      return;
+  }
+  timer++;
+}
+
+const letters = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"];
+
+function add_letter() {
+  things.push({ x:16 + Math.floor((Math.random()-0.5)*4),y:6 + Math.floor((Math.random()-0.5)*4),vel_x:(Math.random()-0.5)/3,vel_y:+Math.random()*-0.5,letter:letters[Math.floor(Math.random() * letters.length)],time:Math.floor(Math.random() * -8),satisfied:false });
+}
+
+function add_ball(bx,by,bletter) {
+  things.push({ x:bx,y:by,vel_x:0,vel_y:0,letter:bletter });
+}
+
+function add_billiard_balls() {
+  var balls = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"];
+  var bx = 16;
+  var by = 8;
+  
+  add_ball(30-bx,by,"16");
+  
+  for (let i = 1; i <= 5; i++) {
+      for (let j = 0; j < i; j++) {
+          var letter = balls[0];
+          balls.splice(0,1);
+          add_ball(bx + (i*1.1),by - ((i-1)*0.55) + (j*1.1),letter)
+      }
+  }
+}
+
+
+function draw() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  if (win_page == true) {
+      document.body.style.cursor = 'auto';
+      ctx.drawImage(title,0,0,canvas.width,canvas.height);
+      var size = canvas.width / 20;
+      var x = canvas.width * 0.4;
+      var y = canvas.height * 0.4;
+      ctx.font = `${size}px Impact,fantasy`;
+      ctx.fillStyle = "white";
+      let score_display = `You win! Score: ${score}`;
+      if (p2_score > score) score_display = "You lose!";
+      else if (p2_score == score) score_display = "It's a tie!";
+      ctx.lineWidth = 4;
+      ctx.strokeText(score_display,x,y+size);
+      ctx.fillText(score_display,x,y+size);
+      
+      requestAnimationFrame(draw);
+      return;
+  }
+  if (titlescreen == true) {
+      document.body.style.cursor = 'auto';
+      ctx.drawImage(title,0,0,canvas.width,canvas.height);
+      if (hiscore > 0) {
+          var size = canvas.width / 20;
+          var x = canvas.width * 0.4;
+          var y = canvas.height * 0.4;
+          ctx.font = `${size}px Impact,fantasy`;
+          ctx.fillStyle = "white";
+          let score_display = `High score: ${hiscore}`;
+          let time_display = `${Math.floor(hiscore_time/60)}:${String(hiscore_time%60).padStart(2, '0')}`;
+          ctx.lineWidth = 4;
+          ctx.strokeText(score_display,x,y+size);
+          ctx.fillText(score_display,x,y+size);
+          ctx.strokeText(time_display,x,y+size+size);
+          ctx.fillText(time_display,x,y+size+size);
+      }
+      
+      requestAnimationFrame(draw);
+      return;
+  }
+  
+  document.body.style.cursor = 'none';
+  
+  canvas.fillstyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  let ww = canvas.width/31;
+  let wh = canvas.height/16;
+  
+  if (canvas.width < canvas.height) {
+      ww = canvas.width/16;
+      wh = canvas.height/32;
+  }
+  
+  for (let i = 0; i < 16; i++) {
+      for (let j = 0; j < 31; j++) {
+          let rx = Math.floor(j * ww);
+          let ry = Math.floor(i * wh);
+          if (canvas.width < canvas.height) {
+              rx = Math.floor(i * ww);
+              ry = Math.floor(j * wh);
+          }
+          let rh = Math.ceil(wh);
+          let rw = Math.ceil(ww);
+          let tile = map[i].charAt(j);
+          let shiftx = 0;
+          let shifty = 0;
+          if (j > 0 && map[i].charAt(j-1) == tile) shiftx = 4;
+          
+          if (canvas.width < canvas.height) {
+              shifty = shiftx;
+              shiftx = 0;
+              if ((tile === tile.toLowerCase() || tile == "1") && tile != "!") {
+                  shiftx = 4;
+                  shifty -= 4;
+              }
+          }
+                    
+          if (tile === "#") ctx.drawImage(sprite,0,0,16,16,rx, ry, rw, rh);
+          else if (tile === "c") ctx.drawImage(sprite,48,32,16,16,rx, ry, rw, rh);
+          else if (tile === "x") ctx.drawImage(sprite,32,32,16,16,rx, ry, rw, rh);
+          else if (tile === "C") ctx.drawImage(sprite,48,48,16,16,rx, ry, rw, rh);
+          else if (tile === "X") ctx.drawImage(sprite,32,48,16,16,rx, ry, rw, rh);
+          else if (tile === "0") ctx.drawImage(sprite,16,16,16,16,rx, ry, rw, rh);
+          else if (tile === "v") {
+              ctx.drawImage(sprite,0,48,16,16,rx, ry, rw, rh);
+          }
+          else if (tile === "b") {
+              ctx.drawImage(sprite,16,48,16,16,rx, ry, rw, rh);
+          }
+          else if (tile === "n") {
+              ctx.drawImage(sprite,0,32,16,16,rx, ry, rw, rh);
+          }
+          else if (tile === "m") {
+              ctx.drawImage(sprite,16,32,16,16,rx, ry, rw, rh);
+          }
+          else if (tile === "d") ctx.drawImage(sprite,0,16,16,16,rx, ry, rw, rh);
+          else if (tile === "3") ctx.drawImage(sprite,16,0,16,16,rx, ry, rw, rh);
+          
+          if (fog == true) {
+              let alpha = Math.hypot(player_x-j,player_y-i) / 8;
+              ctx.fillStyle = `rgba(76,89,99,${alpha})`;
+              ctx.fillRect(rx,ry,rw,rh);
+          }
+      }
+  }
+  
+  var interpolate = 35/(Date.now()-last_phys_tick);
+  
+  var qball;
+  
+  for (let i = 0; i < things.length; i++) {
+      if (things[i] == null) continue;
+      if (typeof things[i].fakeball !== 'undefined') continue;
+      if (things[i].letter == "16") qball = things[i];
+      var sx,sy;
+      sx = 64;
+      sy = 0;
+      var number = Math.floor(things[i].letter)-1;
+      sx += (number % 4) * 16;
+      sy += Math.floor(number / 4) * 16;
+      let x = things[i].x + (things[i].vel_x/interpolate);
+      let y = things[i].y + (things[i].vel_y/interpolate);
+      if (canvas.width < canvas.height) {
+          y = things[i].x + (things[i].vel_x/interpolate);
+          x = things[i].y + (things[i].vel_y/interpolate);
+      }
+      ctx.filter = "drop-shadow(1px 1px 3px #000a)";
+      ctx.drawImage(sprite,sx,sy,16,16,(x-0.5) * ww, (y-0.5) * wh, ww, wh);
+      ctx.filter = "none";
+      ctx.globalCompositeOperation = "screen";
+      ctx.drawImage(sprite,32,16,16,16,(x-0.5) * ww, (y-0.5) * wh, ww, wh);
+      ctx.globalCompositeOperation = "source-over";
+  }
+  
+  if (cuex != null) {
+      ctx.beginPath();
+      ctx.moveTo(cuex*ww, cuey*wh);
+      ctx.lineTo(mx*ww, my*wh);
+      ctx.lineWidth = ww/8;
+      ctx.stroke();
+  }
+  if (p2_cuex != null) {
+      ctx.beginPath();
+      ctx.moveTo(p2_cuex*ww, p2_cuey*wh);
+      ctx.lineTo(p2_mx*ww, p2_my*wh);
+      ctx.lineWidth = ww/8;
+      ctx.stroke();
+  }
+  
+  if (cueball == false) {
+     ctx.drawImage(sprite,48,16,16,16,(mx-0.5) * ww, (my-0.5) * wh, ww, wh);
+  }
+  else if (!turn) {
+     offs_x = 0;
+     offs_y = 0;
+     angle = Math.atan2(qball.y-my,qball.x-mx);
+     angle = (angle * (180 / Math.PI))-90;
+     if (angle > 180) angle -= 180;
+     if (angle < -180) angle += 180;
+     if (angle < 0) angle = 180+angle;
+     if (angle < 22.5 || angle > 157.5) {offs_y = 8;}
+     else if (angle < 67.5) {offs_y = 8; offs_x = 8;}
+     else if (angle < 112.5) {offs_x += 8;}
+     ctx.drawImage(sprite,32+offs_x,0+offs_y,8,8,(mx-0.5) * ww, (my-0.5) * wh, ww, wh);
+  }
+  else if (turn) {
+     offs_x = 0;
+     offs_y = 0;
+     angle = Math.atan2(qball.y-p2_my,qball.x-p2_mx);
+     angle = (angle * (180 / Math.PI))-90;
+     if (angle > 180) angle -= 180;
+     if (angle < -180) angle += 180;
+     if (angle < 0) angle = 180+angle;
+     if (angle < 22.5 || angle > 157.5) {offs_y = 8;}
+     else if (angle < 67.5) {offs_y = 8; offs_x = 8;}
+     else if (angle < 112.5) {offs_x += 8;}
+     ctx.drawImage(sprite,32+offs_x,0+offs_y,8,8,(p2_mx-0.5) * ww, (p2_my-0.5) * wh, ww, wh);
+  }
+  ctx.drawImage(sprite,48,8,16,8,(mx) * ww, (my) * wh, ww, wh/2);
+  ctx.drawImage(sprite,48,0,16,8,(p2_mx) * ww, (p2_my) * wh, ww, wh/2);
+  
+  
+  
+  ctx.font = "30px monospace";
+  ctx.fillStyle = "aqua";
+  let score_display = ` P1:${score} P2:${p2_score}`;
+  if (turn) {
+      score_display = "[P2's turn]" + score_display;
+      ctx.fillStyle = "indianred";
+  }
+  else score_display = "[P1's turn]" + score_display;
+  let timerdisplay = `${Math.floor(timer/60)}:${String(timer%60).padStart(2, '0')}`;
+  ctx.lineWidth = 4;
+  ctx.strokeText(score_display,0,30);
+  ctx.fillText(score_display,0,30);
+  ctx.strokeText(timerdisplay,0,canvas.height-10);
+  ctx.fillText(timerdisplay,0,canvas.height-10);
+  if (!text_bye && false) {
+      ctx.font = "30px monospace";
+  ctx.fillStyle = "chartreuse";
+      let info = "[P1's turn]";
+      ctx.strokeText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+      ctx.fillText(info,(canvas.width-(info.length*18))/2,(canvas.height+60)/2);
+  }
+  
+  requestAnimationFrame(draw);
+}
+
+dot = (a, b) => a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
+function square(x,y) {return (x*x)+(y*y)};
+
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+function check_win() {
+   for (let i = 0; i < things.length; i++) {
+      if (things[i] == undefined || things[i] == null || typeof things[i].fakeball !== 'undefined' || things[i].letter == 16) continue;
+      return;
+   }
+   win_page = true;
+}
+
+function physics_tick() {
+  if (titlescreen == true) return;
+  
+  if (turn) {
+      opponent_tick();
+  }
+  last_phys_tick = Date.now();
+  let collisions = 0;
+  
+  let processed = [];
+  
+  for (let i = 0; i < things.length; i++) {
+      if (things[i] == grabbed_thing && grabbed_thing != null) {
+          things[i].x = mx;
+          things[i].y = my;
+          things[i].vel_x = 0;
+          things[i].vel_y = 0;
+          continue;
+      }
+      if (things[i] == null) continue;
+      if (things[i].x == undefined || things[i].y == undefined) continue;
+      if (things[i].x < 0 || things[i].x >= 32 || things[i].y < 0 || things[i].y >= 16 || things[i].x == NaN || things[i].y == NaN) {
+          things[i].x = 16;
+          things[i].y = 8;
+          things[i].vel_x = 0;
+          things[i].vel_y = 0;
+          if (typeof things[i].fakeball !== 'undefined') {
+              things[i] = null;
+              continue;
+          }
+      }
+      
+      if (typeof things[i].fakeball !== 'undefined') {
+          things[i].faketimer--;
+          if (things[i].faketimer <= 0) {
+              things[i] = null;
+              continue;
+          }
+      }
+      
+      if (processed.includes(i)) continue;
+      
+      let cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+      
+      things[i].x += Math.min(Math.max(things[i].vel_x,-1),1);
+      things[i].y += Math.min(Math.max(things[i].vel_y,-1),1);
+      let new_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+      
+      for (let j = 0; j < things.length; j++) {
+          if (things[j] == null) continue;
+          if (things[i] == null) continue;
+          if (j == i) continue;
+          if (things[j].x == undefined || things[j].y == undefined) continue;
+          if (typeof things[i].fakeball !== 'undefined' && things[j].letter !== "16") continue;
+          if (typeof things[j].fakeball !== 'undefined' && things[i].letter !== "16") continue;
+          if (processed.includes(j)) continue;
+          let distance = square(things[j].x-things[i].x,things[j].y-things[i].y);
+          if (distance > 1) continue;
+          
+          if ((typeof things[j].fakeball !== 'undefined' && things[i].letter == "16") || (typeof things[i].fakeball !== 'undefined' && things[j].letter == "16")) {
+              cueball_struck = true;
+          }
+          
+          temp_vel_x = things[i].vel_x;
+          temp_vel_y = things[i].vel_y;
+          
+          let v1 = Math.hypot(things[i].vel_x,things[i].vel_y)/2;
+          let v2 = Math.hypot(things[j].vel_x,things[j].vel_y)/2;
+          let len = v1 + v2;
+          
+          sfx = ballaudio.cloneNode(); 
+          sfx.playBackRate = len/5 + Math.random();
+          sfx.volume = 0.1+Math.min(len*4,0.9);
+          sfx.play();
+          
+          if (typeof things[i].fakeball !== 'undefined') {
+              things[j].vel_x += things[i].vel_x;
+              things[j].vel_y += things[i].vel_y;
+              things[i] = null;
+          }
+          if (typeof things[j].fakeball !== 'undefined') {
+              things[i].vel_x += things[j].vel_x;
+              things[i].vel_y += things[j].vel_y;
+              things[j] = null;
+          }          
+
+          distance = Math.sqrt(distance);
+          if (things[j] == null) continue;
+          let collision_normal = [(things[j].x-things[i].x)/distance,(things[j].y-things[i].y)/distance]
+          let offs = ((1-distance)/2) + 0.1;
+          
+          things[i].vel_x *= -0.5;
+          things[i].vel_y *= -0.5;
+          things[j].vel_x *= -0.5;
+          things[j].vel_y *= -0.5;
+          
+          things[i].vel_x += things[j].vel_x*-1;
+          things[i].vel_y += things[j].vel_y*-1;
+          things[j].vel_x += temp_vel_x*0.5;
+          things[j].vel_y += temp_vel_y*0.5;
+          
+          things[i].vel_x += -collision_normal[0] * v2;
+          things[i].vel_y += -collision_normal[1] * v2;
+          things[j].vel_x += collision_normal[0] * v1;
+          things[j].vel_y += collision_normal[1] * v1;
+          
+          if (typeof things[i].fakeball == 'undefined' && typeof things[j].fakeball == 'undefined') {
+              things[i].x += collision_normal[0] * -offs;
+              things[i].y += collision_normal[1] * -offs;
+              things[j].x += collision_normal[0] * offs;
+              things[j].y += collision_normal[1] * offs;
+          }          
+          if (typeof things[i].fakeball !== 'undefined') {
+              things[i] = null;
+          }
+          
+          processed.push(j);
+          
+          /*if (things[i].x < things[j].x+0.5 && things[i].x > things[j].x-0.5) {
+              if (things[i].x-things[j].x > 0) {
+                  things[i].x = things[j].x-0.251;
+                  things[j].x += 0.251;
+              }
+              else {
+                  things[i].x = things[j].x+0.251;
+                  things[j].x -= 0.251;
+              }
+          }
+          if (things[i].y < things[j].y+0.5 && things[i].y > things[j].y-0.5) {
+              if (things[i].y-things[j].y > 0) {
+                  things[i].y = things[j].y-0.251;
+                  things[j].y += 0.251;
+              }
+              else {
+                  things[i].y = things[j].y+0.251;
+                  things[j].y -= 0.251;
+              }
+          }*/
+          
+      }
+      
+      if (things[i] == null) continue;
+      
+      var t = new_tile.toLowerCase();
+      var l = things[i].letter.toLowerCase();
+      if (new_tile == "0" && typeof things[i].fakeball == 'undefined') {
+          if (things[i].letter == "16") {
+              cueball = false;
+              if (turn) p2_score -= 250;
+              else score -= 250;
+              var sfx = new Audio('burn.ogg');
+              sfx.play();
+          }
+          else {
+              if (turn) p2_score += 500;
+              else score += 500;
+              var sfx = new Audio('torm_get.ogg');
+              sfx.play();
+              cueball_struck = false;
+              p2_action = 0;
+          }
+          things[i] = null;          
+          continue;
+      }      
+      else if (cur_tile == "#") {
+          var vel_len = Math.hypot(things[i].vel_x,things[i].vel_y);
+          var dir = [16-things[i].x,8-things[i].y];
+          var dir_len = Math.hypot(dir[0],dir[1]);
+          dir[0] /= dir_len;
+          dir[1] /= dir_len;
+          if (vel_len < 0.25) vel_len = 0.25;
+          things[i].vel_x = dir[0]*vel_len;
+          things[i].vel_y = dir[1]*vel_len;
+      }
+      else if (typeof things[i].fakeball !== 'undefined') {}
+      else if (new_tile != "3") {
+          let tile_coords = [Math.floor(things[i].x),Math.floor(things[i].y)];
+      
+          var new_x = Math.floor(things[i].x)-things[i].x;
+          var new_y = Math.floor(things[i].y)-things[i].y;
+          
+          things[i].x -= things[i].vel_x;
+          things[i].y -= things[i].vel_y;
+          
+          var hit_x,hit_y,hit_g = false;
+          
+          var prev_x = Math.floor(things[i].x)-things[i].x;
+          var prev_y = Math.floor(things[i].y)-things[i].y;
+                    
+          function bv(x) {return 16-x;}
+          function nm(x) {return x;}
+          
+          if (new_tile == "b" || new_tile == "c") {
+            /*if (bv(new_x) > new_y && bv(prev_x) < prev_y) {
+                hit_x = true;
+                hit_y = true;
+            }*/
+            //if (!solidat(tile_coords[0]+1,tile_coords[1]) && things[i].x + things[i].vel_x <= tile_coords[0] + 1 && things[i].x > tile_coords[0] +1) hit_x = true;
+            //if (!solidat(tile_coords[0],tile_coords[1]+1) && things[i].y + things[i].vel_y <= tile_coords[1] + 1 && things[i].y > tile_coords[1] + 1) hit_y = true;
+          }
+          else if (new_tile == "v" || new_tile == "X") {
+            /*if (bv(new_x) < new_y && bv(prev_x) > prev_y) {
+                hit_x = true;
+                hit_y = true;
+            }*/
+            //if (!solidat(tile_coords[0]-1,tile_coords[1]) && things[i].x + things[i].vel_x >= tile_coords[0] && things[i].x < tile_coords[0]) hit_x = true;
+            //if (!solidat(tile_coords[0],tile_coords[1]-1) && things[i].y + things[i].vel_y >= tile_coords[1] && things[i].y < tile_coords[1]) hit_y = true;
+          }
+          
+          if (new_tile == "n" || new_tile == "x") {
+            /*if (nm(new_x) < new_y && nm(prev_x) > prev_y) {
+                hit_x = true;
+                hit_y = true;
+            }*/
+          }
+          else if (new_tile == "m" || new_tile == "C") {
+            /*if (nm(new_x) > new_y && nm(prev_x) < prev_y) {
+                hit_x = true;
+                hit_y = true;
+            }*/
+          }
+          else {
+            if (!solidat(tile_coords[0]-1,tile_coords[1]) && things[i].x + things[i].vel_x >= tile_coords[0] && things[i].x < tile_coords[0]) hit_x = true;
+            if (!solidat(tile_coords[0]+1,tile_coords[1]) && things[i].x + things[i].vel_x <= tile_coords[0] + 1 && things[i].x > tile_coords[0] +1) hit_x = true;
+            if (!solidat(tile_coords[0],tile_coords[1]-1) && things[i].y + things[i].vel_y >= tile_coords[1] && things[i].y < tile_coords[1]) hit_y = true;
+            if (!solidat(tile_coords[0],tile_coords[1]+1) && things[i].y + things[i].vel_y <= tile_coords[1] + 1 && things[i].y > tile_coords[1] + 1) hit_y = true;
+          }
+          
+          if (!hit_x && !hit_y && !hit_g) {
+              things[i].x += things[i].vel_x;
+              things[i].y += things[i].vel_y;
+          }
+          
+          if (hit_x) {
+              things[i].vel_x *= -0.8;
+          }
+          if (hit_y) {
+              things[i].vel_y *= -0.8;
+          }
+          
+          things[i].vel_x += (Math.random()-0.5)*(things[i].vel_x*0.5);
+          things[i].vel_y += (Math.random()-0.5)*(things[i].vel_y*0.5);
+      }
+      
+      processed.push(i);
+      
+      things[i].vel_x *= 0.93;
+      things[i].vel_y *= 0.95;
+  }
+  
+  if (cueball_struck) {
+      let z = 0;
+      for (let i = 0; i < things.length; i++) {
+          if (things[i] == undefined || things[i] == null || things[i].fakeball == true) continue;
+          tz = Math.abs(things[i].vel_x + things[i].vel_x);
+          if (tz > z) z = tz;
+      }
+      if (z < 0.01) {
+          cueball_struck = false;
+          turn = !turn;
+          p2_action = 0;
+      }
+  }
+  things.filter(n => n);
+  check_win();
+}
+
+function solidat(x,y) {
+    if (x < 0 || x >= 32 || y < 0 || y >= 16) return true;
+    if (map[y].charAt[x] == "#") return true;
+    return false;
+}
+
+function do_tormater_score() {
+    for (let i = 0; i < things.length; i++) {
+        if (things[i] == null) continue;
+        cur_tile = map[Math.floor(things[i].y)].charAt(Math.floor(things[i].x));
+        
+        if (["T","t","O","o","R","r","M","m","A","a","Y","y","E","e","G","g"].includes(cur_tile)) {
+           things[i] = null;
+           score += 500;
+        }
+        else {
+           things[i].time = -8;
+           if (things[i].letter == "F" || things[i].letter == "P") things[i].letter = letters[Math.floor(Math.random() * (letters.length-2))];
+        }
+    }
+    things.filter(n => n);
+    
+    var sfx = new Audio('torm_get.ogg');
+    sfx.play();
+}
+
+function add_letters() {
+    for (let i = 0; i < timer/20; i++) {
+        add_letter();
+    }
+}
+
+function clear_msg() {
+    if (titlescreen == true) return;
+    text_bye = true;
+    clearInterval(clear_msg);
+}
+
+//setInterval(add_letters,2000);
+
+setInterval(physics_tick, 35);
+//var drawinterval = setInterval(draw, 16);
+draw();
+setInterval(clock_tick,1000);
+
+function change_fps(fps) {
+    clearInterval(drawinterval);
+    drawinterval = setInterval(draw, 1000/fps);
+}
+
+</script>
+  </body>
+</html>
