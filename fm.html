@@ -3,45 +3,105 @@ title: TormaterFM
 layout: default
 meta_img: "/assets/images/tormaterfm_big.png"
 meta_desc: "TormaterFM is an internet-radio webcast which plays non-stop Tormater music, and much more, for free."
+extra_copyright: "This page uses the font 'DIGITAL-7 Mono' by Sizenko Alexander from <a href='https://web.archive.org/web/20230928213156/http://www.styleseven.com/'>Style-7</a>."
 ---
 
 <link rel="stylesheet" href="{{"assets/css/char.css" | absolute_url }}">
 <div class="tormaterfm_header"><img src="{{"assets/images/tormaterfm_big.png" | absolute_url }}" alt="tormaterfm"></div>
-<audio id="tormaterfm" preload="none" type="audio/mpeg" src="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"></audio>
-<div class="tormaterfm_listen">
-    <div id="girl" class="girl-sitting1" onclick="change_girl_animation('clicked')"></div>
-    <button class="mediaplayer_button" id="play"><img src="{{"assets/images/mediaplayer/play.png" | absolute_url }}" alt="Play"></button> 
-    <button class="mediaplayer_button" id="pause" style="display:none"><img src="{{"assets/images/mediaplayer/pause.png" | absolute_url }}" alt="Play"></button> 
-    <a class="mediaplayer_button" target="_blank" href="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"><img src="{{"assets/images/mediaplayer/link.png" | absolute_url }}"></a>
-    <div class="volume_area">
-      <img style="padding: 0px 5px; vertical-align:middle" src="{{"assets/images/mediaplayer/volume.png" | absolute_url }}">
-      <input type="range" id="volume-slider" value=100>
+<audio id="tormaterfm" preload="none" type="audio/mpeg" crossorigin="anonymous" src="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"></audio>
+
+<div class="tormaterfm_player">
+  <div class="tormaterfm_radio">
+    <div class="tormaterfm_radio_grid">
+      <button class="tormaterfm_playbutton" title="Play" id="play" alt="Play"></button>
+      <button class="tormaterfm_playbutton tormaterfm_pausebutton" title="Pause" id="pause" alt="Pause" style="display:none"></button>
+      <div class="tormaterfm_tube"><span id="tormaterfm_display"></span></div>
     </div>
+    <a class="mediaplayer_button" target="_blank" alt="Open direct radio stream" title="Open direct radio stream" href="https://radio.loonietick.com/listen/tormater_fm/radio.mp3"><img src="{{"assets/css/external.svg" | absolute_url }}"></a><img src="{{"assets/css/volume.svg" | absolute_url }}"> <input title="Volume" type="range" class="tormaterfm_volume" id="volume-slider" value=100>
+  </div>
+  <div class="tormaterfm_radio" id="visualizer_container">
+    <canvas class="tormaterfm_visualizer" id="visualizer" height=75 width=350></canvas>
+    <div id="girl" class="girl-sitting1" onclick="change_girl_animation('clicked')"></div>
+  </div>
 </div>
-<div class="tormaterfm_songinfo">
-  <span>Now playing: <i id="tormaterfm_title">...</i></span>&nbsp;<span id="elapsed">00:00</span><span class="tormaterfm_slash">/</span><span id="total">00:00</span>
-</div>
+
 <div class="tormaterfm_about">
 Welcome to TormaterFM!<br>TormaterFM is an internet-radio webcast which plays non-stop Tormater music, and much more, for free. You can listen to TormaterFM anywhere using the provided player above, or with any media player of your choice by copying the link above from the URL button. It's Tormater Time.<br>Tune in online to TormaterFM today!
 <br><br>TormaterFM has been generously hosted by <a href="https://loonietick.com">loonietick.com</a>. Show them some support!
 </div>
 
 <script>
+var audioCtx;
+var analyser;
+var audioSrc;
+
+var visualizer_active = false;
+
+function setup_visualizer() {
+    if (visualizer_active) return;
+    visualizer_active = true;
+    audioCtx = new AudioContext();
+    analyser = audioCtx.createAnalyser();
+    audioSrc = audioCtx.createMediaElementSource(document.getElementById('tormaterfm'));
+    audioSrc.connect(analyser);
+    analyser.connect(audioCtx.destination);
+}
+const canvas = document.getElementById("visualizer");
+const canvasCtx = canvas.getContext("2d");
 let volume = document.getElementById('volume-slider');
 let play = document.getElementById('play');
 let pause = document.getElementById('pause');
-let title = document.getElementById('tormaterfm_title');
+let display = document.getElementById('tormaterfm_display');
 let girl = document.getElementById('girl');
 var girl_animation_index = 0;
 var girl_animation = "sitting";
 let g_anims = {
-    "sitting":[{c:"sit2",m:"-14px",t:20},{c:"sit1",m:"-14px",t:30},{c:"sit2",m:"-14px",t:20},{c:"sit4",m:"-14px",t:20},{c:"sit5",m:"-14px",t:30},{c:"sit4",m:"-14px",t:20}],
-    "clicked":[{c:"click1",m:"-7px",t:15},{c:"click2",m:"-28px",t:20},{c:"click2",m:"-14px",t:20},{c:"sit3",m:"-14px",t:30}]
+    "sitting":[{c:"sit2",m:-14,t:20},{c:"sit1",m:-14,t:30},{c:"sit2",m:-14,t:20},{c:"sit4",m:-14,t:20},{c:"sit5",m:-14,t:30},{c:"sit4",m:-14,t:20}],
+    "clicked":[{c:"click1",m:-7,t:15},{c:"click2",m:-28,t:20},{c:"click2",m:-14,t:20},{c:"sit3",m:-14,t:30}]
 };
 var elapsed = -1;
 var remaining = -1;
+var song_title = "";
+var artist = "";
+var d_title = "TormaterFM";
+var d_artist = "TormaterFM";
+var page = 1;
+var display_offset = 0;
 
-var oh = new Audio('{{"assets/sound/girl_click.ogg" | absolute_url }}');
+var oh = new Audio('https://tormater.com/assets/sound/girl_click.ogg');
+
+function draw() {
+    drawVisual = requestAnimationFrame(draw);
+  
+    var w = canvas.width;
+    var h = canvas.height;
+    canvasCtx.clearRect(0, 0, w, h);
+    canvasCtx.shadowColor = "#355321";
+    canvasCtx.shadowOffsetX = 1;
+    canvasCtx.shadowOffsetY = 1;
+  
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = "#bf0";
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(0, h / 2);
+  
+    if (visualizer_active) {
+        analyser.fftSize = 1024;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyser.getByteTimeDomainData(dataArray);
+  
+        const sliceWidth = w / bufferLength;
+        for (let i = 0; i < bufferLength; i++) {
+            const v = dataArray[i] / 128.0;
+            canvasCtx.lineTo(i*sliceWidth, v * (canvas.height / 2));
+        }
+    }
+    canvasCtx.lineTo(w, h / 2);
+    canvasCtx.stroke();
+}
+
+draw();
 
 async function update_song_info() {
     let response = await fetch("https://radio.loonietick.com/api/nowplaying/tormater_fm", {cache: "no-store"});
@@ -52,9 +112,9 @@ async function update_song_info() {
     let data = await response.json();
     elapsed = data.now_playing.elapsed;
     remaining = data.now_playing.remaining;   
-    if (title.innerHTML === data.now_playing.song.text) return;
-    title.innerHTML = data.now_playing.song.text;
-    await update_timer(0); 
+    song_title = data.now_playing.song.title;
+    artist = data.now_playing.song.artist;
+    if (artist.length < 1 || artist == "Tormater") artist = "TormaterFM";
 }
 
 function update_timer(change=1) {
@@ -62,17 +122,38 @@ function update_timer(change=1) {
         update_song_info();
         return;
     }
-    if (change) {
-        elapsed++;
-        remaining--;
-    }
-    let m = Math.floor(elapsed / 60);
-    let s = elapsed - (m * 60);
-    document.getElementById('elapsed').innerHTML = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
-    m = Math.floor((elapsed+remaining) / 60);
-    s = (elapsed+remaining) - (m * 60);
-    document.getElementById('total').innerHTML = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
+    
+    elapsed++;
+    remaining--;
 }
+function update_display() {
+    var rect = display.getBoundingClientRect();
+    var width = rect.width / 14.2;
+    var space = " ";
+    if (page == 0) text = d_title;
+    else if (page == 1) text = d_artist;
+    var text = space.repeat(width) + text + space.repeat(width);
+    if (display_offset < text.length-width) {
+        display_offset++;
+    }
+    else {
+        display_offset = 0;
+        d_artist = artist;
+        d_title = song_title;
+        page++;
+        if (page > 1) {
+            page = 0;
+            if (elapsed <= 0 || remaining <= 0) page = 1;
+        }
+    }
+    display.textContent = text.substr(display_offset, width)
+}
+
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === 'visible') {
+        update_song_info();
+    }
+});
 
 function animate_girl() {
     if (girl_animation_index >= g_anims[girl_animation].length) {
@@ -80,7 +161,7 @@ function animate_girl() {
         girl_animation = "sitting";
     }
     girl.className = "girl-" + g_anims[girl_animation][girl_animation_index].c;
-    girl.style["margin-top"] = g_anims[girl_animation][girl_animation_index].m;
+    girl.style["margin-top"] = g_anims[girl_animation][girl_animation_index].m - 42 + "px";
     setTimeout(animate_girl,g_anims[girl_animation][girl_animation_index].t*10);
     girl_animation_index++;
 }
@@ -94,12 +175,16 @@ function change_girl_animation(new_anim) {
 }
 
 setInterval(update_timer, 1000);
+setInterval(update_display, 250);
+
+update_display();
 
 animate_girl();
 
 play.addEventListener("click", function(e) {
     document.getElementById('tormaterfm').src = "https://radio.loonietick.com/listen/tormater_fm/radio.mp3?time=" + Date.now();
     document.getElementById('tormaterfm').play();
+    setup_visualizer();
     play.style.display = 'none';
     pause.style.display = '';
     
@@ -135,3 +220,4 @@ volume.addEventListener("input", function(e) {
 
 
 </script>
+

@@ -1,4 +1,9 @@
 name: Tormater.com
+description: Tormater.com is the official homepage of the Tormater community, and it holds a variety of our projects, resources and information.
+url: https://tormater.com
+feed_items: 10
+feed_update_period: daily
+feed_update_frequency: 1
 
 defaults:
   -

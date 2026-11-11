@@ -14,6 +14,33 @@
     background: #fff;
 }
 
+.wiki_small {
+  display: block;
+  font-size: 12px;
+  color: #333;
+}
+
+.wiki_date {
+  color: #333;
+}
+
+.wiki_back {
+  border: 1px solid #346c8d;
+  border-radius: 3px;
+  padding: 0px 8px;
+  background-color: #8bd6ee;
+  background: linear-gradient(#63b1d7,#aaf3ff);
+  box-shadow: 0px 1px #fff6 inset;
+  color: #000;
+  display: inline-block;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+.wiki_back:hover {
+  background: linear-gradient(#6de8e8,#fcfff9);
+  border-color: #2997a2;
+}
+
 .wiki_tab_link {
     background: linear-gradient(#fff,#cae0ff);
 }
@@ -101,13 +128,16 @@ blockquote p {
   border-radius: 3px;  
   padding: 0px 6px;
   border: 1px solid #8f9999;
+  background-color: #d3e2e2;
   background-image: linear-gradient(#e8f9f9,#bfcdcd);
   text-shadow: 0px -1px #e8f9f9;
   color: #000;
+  line-height: 1.5;
 }
 
 .wiki_edit_pink {
   border: 1px solid #8c8c96;
+  background-color: #d3d3e2;
   background-image: linear-gradient(#e8e8f9,#bfbfcd);
   text-shadow: 0px -1px #e8e8f9;
 }

@@ -18,7 +18,7 @@ meta_title: "Tormater.com: The official Tormater website."
 </div>
 <br>
 <div class="text_widget tw_blue tw_forum">
-  <img src="{{ "assets/images/tormater_forum.png" | absolute_url }}">
+  <img src="{{ "assets/images/tormater_forum.png" | absolute_url }}" class="widget_img_left">
   <div>
     <h2 style="margin-top: 0px">Tormater Forum</h2>
     <p>Tormater Forum is a lightweight, easy-to-use forum software built from the ground up with PHP and MySQL. 
@@ -44,5 +44,17 @@ The best edition of Tormater yet! Tor_GET this new tormater concoction today!</p
     <h2 style="margin-top: 0px">Tormater 3D Soundtrack</h2>
     <p>The official soundtrack of the hit video-game, Tormater 3D, digitally remastered in high fidelity, with bonus live tracks.</p>
     <iframe style="border: 0; width: 100%; height: 120px" src="https://bandcamp.com/EmbeddedPlayer/album=3755111180/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/artwork=small/transparent=true/" seamless><a href="https://tormater.bandcamp.com/album/tormater-ost-volume-1-deluxe-edition">Tormater OST: Volume 1 (Deluxe Edition) by Tormater</a></iframe>
+  </div>
+</div>
+<br>
+<div class="widget_dropshadow">
+  <div class="sky_widget"><h2>Latest news</h2>
+  </div>
+  <div class="blog_widget">
+    <ul class="blog">
+      {% for post in site.posts limit:5 %}<li><span class="wiki_date">{{ post.date | date_to_long_string: "ordinal", "US" }} > </span><a href="{{ post.url }}">{{ post.title }}</a><br></li>
+      {% endfor %}
+    </ul>
+    <a href="{{ "news" | absolute_url }}">view the archive</a>
   </div>
 </div>

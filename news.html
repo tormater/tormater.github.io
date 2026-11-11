@@ -1,0 +1,16 @@
+---
+title: News
+layout: default
+---
+
+<link rel="stylesheet" href="{{"assets/css/wiki.css" | absolute_url }}">
+
+<h2 class="page_title">Tormater News</h2>
+<br>
+<div class="wiki_content">
+  {% for post in site.posts %}{% assign currentdate = post.date | date: "%Y" %}{% if currentdate != date %}{% if date.size > 0 %}</ul>{% endif %} {{ currentdate }}<ul class="blog">{% assign date = currentdate %}{% endif %}<li><span class="wiki_date">{{ post.date | date_to_long_string: "ordinal", "US" }} > </span><a href="{{ post.url }}">{{ post.title }}</a><br></li>
+  {% endfor %}
+</ul>
+
+Note: Articles dated older than 2022 have been omitted from the archive, but may be added in the future.
+</div>
